@@ -12,6 +12,7 @@ import UserSignIn from "./pages/UserSignIn";
 import UserSignUp from "./pages/UserSignUp";
 import SellerSignIn from "./pages/SellerSignIn";
 import SellerSignUp from "./pages/SellerSignUp";
+import Profile from "./pages/Profile";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
           {/* Main Pages */}
           <Route path="/auctions" element={<Auctions />} />
           <Route path="/about" element={<About />} />
+          <Route path="/profile" element={<Profile />} />
           
           {/* Authentication Routes */}
           <Route path="/user-signin" element={<UserSignIn />} />

@@ -38,8 +38,8 @@ const SellerSignIn = () => {
       description: "Welcome back to your seller dashboard",
     });
     
-    // Redirect to home page after successful login (would go to seller dashboard in real app)
-    setTimeout(() => navigate("/"), 1500);
+    // Redirect to profile page after successful login
+    setTimeout(() => navigate("/profile"), 1500);
   };
 
   return (

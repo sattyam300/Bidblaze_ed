@@ -12,9 +12,9 @@ const About = () => {
         <section className="py-16 bg-white dark:bg-gray-900">
           <div className="container mx-auto px-4 md:px-6">
             <div className="max-w-3xl mx-auto text-center mb-12">
-              <h1 className="text-4xl font-bold mb-6">About BidBlazer</h1>
+              <h1 className="text-4xl font-bold mb-6">About BidBlaze</h1>
               <p className="text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
-                BidBlazer is a premier real-time auction monitoring platform that brings together
+                BidBlaze is a premier real-time auction monitoring platform that brings together
                 internal and external auctions in one seamless experience.
               </p>
             </div>
@@ -23,11 +23,15 @@ const About = () => {
               <div>
                 <h2 className="text-2xl font-bold mb-4">Our Mission</h2>
                 <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
-                  At BidBlazer, we're passionate about creating the most transparent,
-                  efficient, and user-friendly auction platform in the world. We believe in
-                  connecting buyers with unique items they love while providing sellers with
-                  a global audience for their products.
+                  At BidBlaze, our mission is to revolutionize online auctions by providing a real-time, secure, and user-friendly platform that brings together buyers, sellers, and auction enthusiasts. We strive to:
                 </p>
+                <ul className="text-gray-600 dark:text-gray-300 mb-6 space-y-2 list-disc pl-6">
+                  <li>Simplify the auction process by centralizing auction listings from multiple platforms.</li>
+                  <li>Ensure transparency and fairness through fraud detection, KYC verification, and secure payments.</li>
+                  <li>Empower users with real-time updates using WebSockets and AI-driven analytics.</li>
+                  <li>Enhance accessibility with seamless bidding, external auction tracking, and a future mobile app.</li>
+                  <li>Create a trusted marketplace where every transaction is secure, efficient, and hassle-free.</li>
+                </ul>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                   Our innovative platform combines cutting-edge technology with a user-centered
                   design to make auction participation seamless and enjoyable.
@@ -36,7 +40,7 @@ const About = () => {
               <div className="rounded-xl overflow-hidden shadow-lg">
                 <img 
                   src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80&w=1200&h=800" 
-                  alt="BidBlazer Team" 
+                  alt="BidBlaze Team" 
                   className="w-full h-auto"
                 />
               </div>

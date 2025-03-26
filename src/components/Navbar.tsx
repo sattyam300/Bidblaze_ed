@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Menu, X, Search, Bell, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -19,6 +19,7 @@ import {
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -69,7 +70,7 @@ const Navbar = () => {
             </div>
             <span className="font-semibold text-xl tracking-tight">
               <span className="text-gradient">Bid</span>
-              <span className="text-gray-800 dark:text-gray-200">Blazer</span>
+              <span className="text-gray-800 dark:text-gray-200">Blaze</span>
             </span>
           </Link>
 

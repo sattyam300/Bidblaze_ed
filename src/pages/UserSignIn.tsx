@@ -35,11 +35,11 @@ const UserSignIn = () => {
     // For demonstration purposes, show a success toast and redirect
     toast({
       title: "Sign in successful!",
-      description: "Welcome back to AuctionMonitor",
+      description: "Welcome back to BidBlaze",
     });
     
-    // Redirect to home page after successful login
-    setTimeout(() => navigate("/"), 1500);
+    // Redirect to profile page after successful login
+    setTimeout(() => navigate("/profile"), 1500);
   };
 
   return (

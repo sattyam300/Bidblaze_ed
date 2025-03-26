@@ -44,11 +44,11 @@ const AuthLayout = ({
             className="inline-flex items-center justify-center gap-2 mb-4 group"
           >
             <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-blue-500 flex items-center justify-center animate-pulse-light">
-              <span className="text-white font-bold text-xl">A</span>
+              <span className="text-white font-bold text-xl">B</span>
             </div>
             <span className="font-semibold text-xl tracking-tight">
-              <span className="text-primary">Auction</span>
-              <span className="text-gray-800 dark:text-gray-200">Monitor</span>
+              <span className="text-primary">Bid</span>
+              <span className="text-gray-800 dark:text-gray-200">Blaze</span>
             </span>
           </Link>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{title}</h1>

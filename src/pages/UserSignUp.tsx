@@ -43,7 +43,7 @@ const UserSignUp = () => {
     // For demonstration purposes, show a success toast and redirect
     toast({
       title: "Account created successfully!",
-      description: "Welcome to AuctionMonitor. You can now sign in.",
+      description: "Welcome to BidBlaze. You can now sign in.",
     });
     
     // Redirect to sign-in page after successful registration
@@ -53,7 +53,7 @@ const UserSignUp = () => {
   return (
     <AuthLayout
       title="Create a User Account"
-      subtitle="Join AuctionMonitor to bid on exciting items"
+      subtitle="Join BidBlaze to bid on exciting items"
       footer={{
         text: "Already have an account?",
         linkText: "Sign in",
