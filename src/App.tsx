@@ -13,6 +13,8 @@ import UserSignUp from "./pages/UserSignUp";
 import SellerSignIn from "./pages/SellerSignIn";
 import SellerSignUp from "./pages/SellerSignUp";
 import Profile from "./pages/Profile";
+import MakeBid from "./pages/MakeBid";
+import ExternalAuctions from "./pages/ExternalAuctions";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +31,10 @@ const App = () => (
           <Route path="/auctions" element={<Auctions />} />
           <Route path="/about" element={<About />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/external-auctions" element={<ExternalAuctions />} />
+          
+          {/* Auction & Bidding Routes */}
+          <Route path="/bid/:auctionId" element={<MakeBid />} />
           
           {/* Authentication Routes */}
           <Route path="/user-signin" element={<UserSignIn />} />

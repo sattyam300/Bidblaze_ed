@@ -1,5 +1,5 @@
-
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -8,7 +8,27 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Clock, Package, BarChart3, Heart, Settings, LogOut, ShoppingBag } from "lucide-react";
+import { 
+  Clock, 
+  Package, 
+  BarChart3, 
+  Heart, 
+  Settings, 
+  LogOut, 
+  ShoppingBag,
+  AlertCircle
+} from "lucide-react";
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { toast } from "sonner";
 
 // Mock data for demonstration purposes
 const userInfo = {
@@ -129,7 +149,19 @@ const getStatusColor = (status: string) => {
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState("overview");
-
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
+  const navigate = useNavigate();
+  
+  const handleLogout = () => {
+    // Simulate logout process
+    toast.success("You've been successfully logged out");
+    
+    // Navigate to home page after logout
+    setTimeout(() => {
+      navigate("/");
+    }, 1500);
+  };
+  
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -190,7 +222,8 @@ const Profile = () => {
                     </Button>
                     <Button 
                       variant="ghost" 
-                      className="w-full justify-start text-gray-500 dark:text-gray-400"
+                      className="w-full justify-start text-red-500 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-950/20"
+                      onClick={() => setLogoutDialogOpen(true)}
                     >
                       <LogOut className="mr-2 h-4 w-4" /> Sign out
                     </Button>
@@ -453,6 +486,24 @@ const Profile = () => {
         </div>
       </main>
       <Footer />
+      
+      {/* Logout Confirmation Dialog */}
+      <AlertDialog open={logoutDialogOpen} onOpenChange={setLogoutDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to sign out?</AlertDialogTitle>
+            <AlertDialogDescription>
+              You will be logged out of your BidBlaze account on this device.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleLogout} className="bg-red-500 hover:bg-red-600">
+              Sign Out
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

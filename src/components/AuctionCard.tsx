@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Clock, Heart, ExternalLink, Activity, Users, DollarSign } from "lucide-react";
 
@@ -103,11 +104,18 @@ const AuctionCard = ({
             </Button>
           ) : (
             <>
-              <Button variant="outline" className="w-1/2 rounded-lg">
+              <Button 
+                variant="outline" 
+                className="w-1/2 rounded-lg"
+                as={Link}
+                to={`/bid/${id}`}
+              >
                 <DollarSign className="h-4 w-4 mr-1" />
                 Bid Now
               </Button>
-              <Button className="w-1/2 rounded-lg">View Details</Button>
+              <Button className="w-1/2 rounded-lg" as={Link} to={`/bid/${id}`}>
+                View Details
+              </Button>
             </>
           )}
         </div>

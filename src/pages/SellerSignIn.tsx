@@ -1,54 +1,56 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Checkbox } from "@/components/ui/checkbox";
 import AuthLayout from "@/components/AuthLayout";
-import { toast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  email: z.string().email({ message: "Please enter a valid email address." }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters." }),
+  rememberMe: z.boolean().optional(),
 });
 
 const SellerSignIn = () => {
   const navigate = useNavigate();
-  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
       password: "",
+      rememberMe: false,
     },
   });
-
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    // This would be replaced with actual authentication logic for sellers
-    console.log("Seller login attempt with:", values);
+  
+  function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsLoading(true);
     
-    // For demonstration purposes, show a success toast and redirect
-    toast({
-      title: "Seller sign in successful!",
-      description: "Welcome back to your seller dashboard",
-    });
-    
-    // Redirect to profile page after successful login
-    setTimeout(() => navigate("/profile"), 1500);
-  };
-
+    // Simulate API call
+    setTimeout(() => {
+      console.log(values);
+      setIsLoading(false);
+      toast.success("Successfully signed in as a seller!");
+      
+      // Redirect to profile page after successful login
+      navigate("/profile");
+    }, 1500);
+  }
+  
   return (
     <AuthLayout
       title="Seller Sign In"
-      subtitle="Access your seller dashboard to manage auctions"
+      subtitle="Welcome back! Sign in to manage your auctions."
       footer={{
         text: "Don't have a seller account?",
-        linkText: "Register as seller",
+        linkText: "Sign up as a seller",
         linkTo: "/seller-signup",
       }}
       userType="seller"
@@ -62,7 +64,7 @@ const SellerSignIn = () => {
               <FormItem>
                 <FormLabel>Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter your email" {...field} />
+                  <Input placeholder="example@business.com" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -76,50 +78,37 @@ const SellerSignIn = () => {
               <FormItem>
                 <FormLabel>Password</FormLabel>
                 <FormControl>
-                  <div className="relative">
-                    <Input
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Enter your password"
-                      {...field}
-                    />
-                    <Button
-                      type="button"
-                      variant="ghost"
-                      size="icon"
-                      className="absolute right-0 top-0 h-full"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? (
-                        <EyeOffIcon className="h-4 w-4" />
-                      ) : (
-                        <EyeIcon className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </div>
+                  <Input type="password" placeholder="••••••••" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
           
-          <div className="flex justify-between items-center text-sm">
-            <div className="flex items-center space-x-2">
-              <input 
-                type="checkbox" 
-                id="remember" 
-                className="rounded border-gray-300 text-primary focus:ring-primary"
-              />
-              <label htmlFor="remember" className="text-gray-600 dark:text-gray-400">
-                Remember me
-              </label>
-            </div>
-            <a href="#" className="text-primary hover:underline">
+          <div className="flex items-center justify-between">
+            <FormField
+              control={form.control}
+              name="rememberMe"
+              render={({ field }) => (
+                <FormItem className="flex items-center space-x-2 space-y-0">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <FormLabel className="text-sm cursor-pointer">Remember me</FormLabel>
+                </FormItem>
+              )}
+            />
+            
+            <Button variant="link" className="p-0 h-auto font-medium text-primary" type="button">
               Forgot password?
-            </a>
+            </Button>
           </div>
           
-          <Button type="submit" className="w-full">
-            Sign In as Seller
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading ? "Signing in..." : "Sign In"}
           </Button>
         </form>
       </Form>
