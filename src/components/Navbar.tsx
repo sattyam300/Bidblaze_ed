@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { Menu, X, Search, Bell } from "lucide-react";
+import { Menu, X, Search, Bell, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -9,6 +9,12 @@ import {
   SheetTrigger,
   SheetClose
 } from "@/components/ui/sheet";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -22,6 +28,27 @@ const Navbar = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const upcomingAuctions = [
+    {
+      id: "1",
+      title: "Vintage Rolex Collection",
+      time: "Tomorrow, 2:00 PM",
+      image: "https://images.unsplash.com/photo-1547996160-81dfa63595aa?auto=format&fit=crop&q=80&w=100&h=100",
+    },
+    {
+      id: "2",
+      title: "Rare Art Pieces Auction",
+      time: "Today, 8:00 PM",
+      image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&q=80&w=100&h=100",
+    },
+    {
+      id: "3",
+      title: "Classic Cars Exhibition",
+      time: "Jul 15, 10:00 AM",
+      image: "https://images.unsplash.com/photo-1567808291548-fc3ee04dbcf0?auto=format&fit=crop&q=80&w=100&h=100",
+    }
+  ];
 
   return (
     <header
@@ -38,11 +65,11 @@ const Navbar = () => {
             className="flex items-center space-x-2 group"
           >
             <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-blue-500 flex items-center justify-center animate-pulse-light">
-              <span className="text-white font-bold text-xl">A</span>
+              <span className="text-white font-bold text-xl">B</span>
             </div>
             <span className="font-semibold text-xl tracking-tight">
-              <span className="text-gradient">Auction</span>
-              <span className="text-gray-800 dark:text-gray-200">Monitor</span>
+              <span className="text-gradient">Bid</span>
+              <span className="text-gray-800 dark:text-gray-200">Blazer</span>
             </span>
           </Link>
 
@@ -60,12 +87,31 @@ const Navbar = () => {
             >
               Auctions
             </Link>
-            <Link 
-              to="/how-it-works" 
-              className="text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary transition-colors link-underline"
-            >
-              How It Works
-            </Link>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary transition-colors link-underline">
+                  Categories
+                  <ChevronDown className="h-4 w-4 ml-1" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="center" className="w-48">
+                <DropdownMenuItem asChild>
+                  <Link to="/auctions?category=watches" className="cursor-pointer">Watches</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/auctions?category=art" className="cursor-pointer">Art</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/auctions?category=jewelry" className="cursor-pointer">Jewelry</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/auctions?category=cars" className="cursor-pointer">Cars</Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link to="/auctions?category=books" className="cursor-pointer">Books</Link>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
             <Link 
               to="/about" 
               className="text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary transition-colors link-underline"
@@ -79,9 +125,51 @@ const Navbar = () => {
             <Button variant="ghost" size="icon" className="text-gray-700 dark:text-gray-200">
               <Search className="h-5 w-5" />
             </Button>
-            <Button variant="ghost" size="icon" className="text-gray-700 dark:text-gray-200">
-              <Bell className="h-5 w-5" />
-            </Button>
+            
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="text-gray-700 dark:text-gray-200 relative">
+                  <Bell className="h-5 w-5" />
+                  <span className="absolute -top-1 -right-1 h-4 w-4 bg-primary rounded-full flex items-center justify-center text-[10px] text-white">
+                    3
+                  </span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-80">
+                <div className="p-4 border-b">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold">Upcoming Auctions</h3>
+                    <Button variant="link" size="sm" className="p-0 h-auto">
+                      Mark all as read
+                    </Button>
+                  </div>
+                </div>
+                <div className="max-h-[300px] overflow-y-auto">
+                  {upcomingAuctions.map((auction) => (
+                    <DropdownMenuItem key={auction.id} asChild>
+                      <Link to={`/auctions/${auction.id}`} className="flex items-start gap-3 py-3 cursor-pointer">
+                        <img 
+                          src={auction.image} 
+                          alt={auction.title} 
+                          className="h-10 w-10 rounded-md object-cover"
+                        />
+                        <div>
+                          <p className="font-medium text-sm">{auction.title}</p>
+                          <p className="text-gray-500 dark:text-gray-400 text-xs">{auction.time}</p>
+                        </div>
+                      </Link>
+                    </DropdownMenuItem>
+                  ))}
+                </div>
+                <div className="p-2 border-t">
+                  <Button variant="outline" size="sm" className="w-full" asChild>
+                    <Link to="/notifications">
+                      View All Notifications
+                    </Link>
+                  </Button>
+                </div>
+              </DropdownMenuContent>
+            </DropdownMenu>
             
             <Sheet>
               <SheetTrigger asChild>
@@ -182,13 +270,58 @@ const Navbar = () => {
               >
                 Auctions
               </Link>
-              <Link 
-                to="/how-it-works" 
-                className="block py-2 text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                How It Works
-              </Link>
+              <div className="py-2">
+                <button 
+                  className="flex items-center text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary w-full justify-between"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    const submenu = document.getElementById('categories-submenu');
+                    if (submenu) {
+                      submenu.classList.toggle('hidden');
+                    }
+                  }}
+                >
+                  <span>Categories</span>
+                  <ChevronDown className="h-4 w-4" />
+                </button>
+                <div id="categories-submenu" className="hidden pl-4 mt-2 space-y-2">
+                  <Link 
+                    to="/auctions?category=watches" 
+                    className="block py-1 text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Watches
+                  </Link>
+                  <Link 
+                    to="/auctions?category=art" 
+                    className="block py-1 text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Art
+                  </Link>
+                  <Link 
+                    to="/auctions?category=jewelry" 
+                    className="block py-1 text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Jewelry
+                  </Link>
+                  <Link 
+                    to="/auctions?category=cars" 
+                    className="block py-1 text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Cars
+                  </Link>
+                  <Link 
+                    to="/auctions?category=books" 
+                    className="block py-1 text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    Books
+                  </Link>
+                </div>
+              </div>
               <Link 
                 to="/about" 
                 className="block py-2 text-gray-700 dark:text-gray-200 hover:text-primary dark:hover:text-primary"

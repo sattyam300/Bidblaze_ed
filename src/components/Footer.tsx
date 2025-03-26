@@ -1,6 +1,6 @@
 
 import { Link } from "react-router-dom";
-import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin, Github } from "lucide-react";
+import { Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Footer = () => {
@@ -12,11 +12,11 @@ const Footer = () => {
           <div>
             <Link to="/" className="flex items-center space-x-2 mb-6">
               <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary to-blue-500 flex items-center justify-center">
-                <span className="text-white font-bold text-xl">A</span>
+                <span className="text-white font-bold text-xl">B</span>
               </div>
               <span className="font-semibold text-xl tracking-tight">
-                <span className="text-gradient">Auction</span>
-                <span className="text-gray-800 dark:text-gray-200">Monitor</span>
+                <span className="text-gradient">Bid</span>
+                <span className="text-gray-800 dark:text-gray-200">Blazer</span>
               </span>
             </Link>
             
@@ -55,8 +55,8 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/how-it-works" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
-                  How It Works
+                <Link to="/auctions" className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
+                  Categories
                 </Link>
               </li>
               <li>
@@ -124,7 +124,7 @@ const Footer = () => {
               <li className="flex items-center">
                 <Mail className="h-5 w-5 text-primary mr-3" />
                 <span className="text-gray-600 dark:text-gray-300">
-                  support@auctionmonitor.com
+                  support@bidblazer.com
                 </span>
               </li>
             </ul>
@@ -133,7 +133,7 @@ const Footer = () => {
         
         <div className="mt-12 pt-8 border-t border-gray-200 dark:border-gray-800 flex flex-col md:flex-row justify-between items-center">
           <p className="text-gray-600 dark:text-gray-300 text-sm mb-4 md:mb-0">
-            © {new Date().getFullYear()} AuctionMonitor. All rights reserved.
+            © {new Date().getFullYear()} BidBlazer. All rights reserved.
           </p>
           <div className="flex space-x-4">
             <Link to="/terms" className="text-sm text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-primary transition-colors">
