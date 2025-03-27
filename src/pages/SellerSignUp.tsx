@@ -8,9 +8,15 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { EyeIcon, EyeOffIcon, Loader2 } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
 import { toast } from "@/hooks/use-toast";
+import { createClient } from '@supabase/supabase-js';
+
+// Initialize Supabase client - replace with your own Supabase URL and anon key
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const formSchema = z.object({
   businessName: z.string().min(2, { message: "Business name must be at least 2 characters" }),
@@ -28,6 +34,8 @@ const SellerSignUp = () => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -41,18 +49,64 @@ const SellerSignUp = () => {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    // This would be replaced with actual seller registration logic
-    console.log("Seller registration attempt with:", values);
-    
-    // For demonstration purposes, show a success toast and redirect
-    toast({
-      title: "Seller account created!",
-      description: "Your application has been submitted for review",
-    });
-    
-    // Redirect to sign-in page after successful registration
-    setTimeout(() => navigate("/seller-signin"), 1500);
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    if (!termsAccepted) {
+      toast({
+        title: "Terms required",
+        description: "You must accept the terms to continue",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // 1. Register user with Supabase auth
+      const { data: authData, error: authError } = await supabase.auth.signUp({
+        email: values.email,
+        password: values.password,
+        options: {
+          data: {
+            role: 'seller',
+            business_name: values.businessName,
+          }
+        }
+      });
+
+      if (authError) throw authError;
+
+      // 2. Store additional seller details in 'sellers' table
+      const { error: profileError } = await supabase
+        .from('sellers')
+        .insert({
+          user_id: authData.user?.id,
+          business_name: values.businessName,
+          email: values.email,
+          phone: values.phone,
+          description: values.description,
+          status: 'pending' // Sellers need approval
+        });
+
+      if (profileError) throw profileError;
+
+      // Success! Show success message
+      toast({
+        title: "Seller account created!",
+        description: "Your application has been submitted for review",
+      });
+
+      // Redirect to sign-in page after successful registration
+      setTimeout(() => navigate("/seller-signin"), 1500);
+    } catch (error) {
+      console.error("Registration error:", error);
+      toast({
+        title: "Registration failed",
+        description: error instanceof Error ? error.message : "Please try again later",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -200,15 +254,23 @@ const SellerSignUp = () => {
               type="checkbox" 
               id="terms" 
               className="rounded border-gray-300 text-primary focus:ring-primary mt-1"
-              required
+              checked={termsAccepted}
+              onChange={(e) => setTermsAccepted(e.target.checked)}
             />
             <label htmlFor="terms" className="text-sm text-gray-600 dark:text-gray-400">
               I agree to the <a href="#" className="text-primary hover:underline">Terms of Service</a>, <a href="#" className="text-primary hover:underline">Privacy Policy</a>, and understand that my application will be reviewed before approval
             </label>
           </div>
           
-          <Button type="submit" className="w-full">
-            Register as Seller
+          <Button type="submit" className="w-full" disabled={isLoading}>
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Processing...
+              </>
+            ) : (
+              "Register as Seller"
+            )}
           </Button>
         </form>
       </Form>
