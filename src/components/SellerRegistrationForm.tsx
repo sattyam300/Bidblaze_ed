@@ -12,7 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { toast } from "@/hooks/use-toast";
 import PasswordInput from "./PasswordInput";
 import TermsCheckbox from "./TermsCheckbox";
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from "@/integrations/supabase/client";
 
 // Form schema validation
 const formSchema = z.object({
@@ -36,11 +36,6 @@ const SellerRegistrationForm = ({ onMissingEnvVars }: SellerRegistrationFormProp
   const [isLoading, setIsLoading] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   
-  // Initialize Supabase client with fallback values for development
-  const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://your-supabase-url.supabase.co';
-  const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'your-anon-key';
-  const supabase = createClient(supabaseUrl, supabaseAnonKey);
-  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -54,17 +49,6 @@ const SellerRegistrationForm = ({ onMissingEnvVars }: SellerRegistrationFormProp
   });
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    // Check if Supabase is properly configured
-    if (!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY) {
-      toast({
-        title: "Configuration Error",
-        description: "Supabase environment variables are not set. Please configure your environment.",
-        variant: "destructive"
-      });
-      onMissingEnvVars();
-      return;
-    }
-
     if (!termsAccepted) {
       toast({
         title: "Terms required",

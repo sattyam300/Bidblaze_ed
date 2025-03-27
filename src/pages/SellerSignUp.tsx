@@ -3,9 +3,12 @@ import { useState } from "react";
 import AuthLayout from "@/components/AuthLayout";
 import SellerRegistrationForm from "@/components/SellerRegistrationForm";
 import EnvConfigDialog from "@/components/EnvConfigDialog";
+import { supabase } from "@/integrations/supabase/client";
 
 const SellerSignUp = () => {
-  const [showEnvDialog, setShowEnvDialog] = useState(!import.meta.env.VITE_SUPABASE_URL || !import.meta.env.VITE_SUPABASE_ANON_KEY);
+  // Check if Supabase connection is valid
+  const isSupabaseConfigured = Boolean(supabase);
+  const [showEnvDialog, setShowEnvDialog] = useState(!isSupabaseConfigured);
   
   return (
     <>
