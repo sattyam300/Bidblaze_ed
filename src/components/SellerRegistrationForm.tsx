@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -9,10 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { toast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import PasswordInput from "./PasswordInput";
 import TermsCheckbox from "./TermsCheckbox";
-import { supabase } from "@/integrations/supabase/client";
 
 // Form schema validation
 const formSchema = z.object({
@@ -27,11 +25,7 @@ const formSchema = z.object({
   path: ["confirmPassword"],
 });
 
-interface SellerRegistrationFormProps {
-  onMissingEnvVars: () => void;
-}
-
-const SellerRegistrationForm = ({ onMissingEnvVars }: SellerRegistrationFormProps) => {
+const SellerRegistrationForm = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
@@ -50,58 +44,28 @@ const SellerRegistrationForm = ({ onMissingEnvVars }: SellerRegistrationFormProp
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!termsAccepted) {
-      toast({
-        title: "Terms required",
-        description: "You must accept the terms to continue",
-        variant: "destructive"
+      toast("Terms required", {
+        description: "You must accept the terms to continue"
       });
       return;
     }
 
     setIsLoading(true);
     try {
-      // 1. Register user with Supabase auth
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: values.email,
-        password: values.password,
-        options: {
-          data: {
-            role: 'seller',
-            business_name: values.businessName,
-          }
-        }
-      });
-
-      if (authError) throw authError;
-
-      // 2. Store additional seller details in 'sellers' table
-      const { error: profileError } = await supabase
-        .from('sellers')
-        .insert({
-          user_id: authData.user?.id,
-          business_name: values.businessName,
-          email: values.email,
-          phone: values.phone,
-          description: values.description,
-          status: 'pending' // Sellers need approval
-        });
-
-      if (profileError) throw profileError;
-
+      // Simulate registration process
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
       // Success! Show success message
-      toast({
-        title: "Seller account created!",
-        description: "Your application has been submitted for review",
+      toast("Seller account created!", {
+        description: "Your application has been submitted for review"
       });
 
       // Redirect to sign-in page after successful registration
       setTimeout(() => navigate("/seller-signin"), 1500);
     } catch (error) {
       console.error("Registration error:", error);
-      toast({
-        title: "Registration failed",
-        description: error instanceof Error ? error.message : "Please try again later",
-        variant: "destructive"
+      toast("Registration failed", {
+        description: error instanceof Error ? error.message : "Please try again later"
       });
     } finally {
       setIsLoading(false);

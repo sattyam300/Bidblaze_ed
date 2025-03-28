@@ -2,14 +2,8 @@
 import { useState } from "react";
 import AuthLayout from "@/components/AuthLayout";
 import SellerRegistrationForm from "@/components/SellerRegistrationForm";
-import EnvConfigDialog from "@/components/EnvConfigDialog";
-import { supabase } from "@/integrations/supabase/client";
 
 const SellerSignUp = () => {
-  // Check if Supabase connection is valid
-  const isSupabaseConfigured = Boolean(supabase);
-  const [showEnvDialog, setShowEnvDialog] = useState(!isSupabaseConfigured);
-  
   return (
     <>
       <AuthLayout
@@ -23,13 +17,8 @@ const SellerSignUp = () => {
         userType="seller"
         isLogin={false}
       >
-        <SellerRegistrationForm onMissingEnvVars={() => setShowEnvDialog(true)} />
+        <SellerRegistrationForm />
       </AuthLayout>
-
-      <EnvConfigDialog 
-        open={showEnvDialog} 
-        onOpenChange={setShowEnvDialog} 
-      />
     </>
   );
 };

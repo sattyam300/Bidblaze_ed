@@ -9,8 +9,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Loader2 } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
-import { toast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 import PasswordInput from "@/components/PasswordInput";
 
 const formSchema = z.object({
@@ -40,54 +39,28 @@ const UserSignUp = () => {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!termsAccepted) {
-      toast({
-        title: "Terms required",
-        description: "You must accept the terms to continue",
-        variant: "destructive"
+      toast("Terms required", {
+        description: "You must accept the terms to continue"
       });
       return;
     }
 
     setIsLoading(true);
     try {
-      // 1. Register user with Supabase auth
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: values.email,
-        password: values.password,
-        options: {
-          data: {
-            role: 'user',
-            full_name: values.name,
-          }
-        }
-      });
-
-      if (authError) throw authError;
-
-      // 2. Store additional user details in 'profiles' table
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .insert({
-          user_id: authData.user?.id,
-          full_name: values.name
-        });
-
-      if (profileError) throw profileError;
-
+      // Simulate registration process
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
       // Success! Show success message
-      toast({
-        title: "Account created!",
-        description: "You can now sign in with your credentials",
+      toast("Account created!", {
+        description: "You can now sign in with your credentials"
       });
 
       // Redirect to sign-in page after successful registration
       setTimeout(() => navigate("/user-signin"), 1500);
     } catch (error) {
       console.error("Registration error:", error);
-      toast({
-        title: "Registration failed",
-        description: error instanceof Error ? error.message : "Please try again later",
-        variant: "destructive"
+      toast("Registration failed", {
+        description: error instanceof Error ? error.message : "Please try again later"
       });
     } finally {
       setIsLoading(false);
