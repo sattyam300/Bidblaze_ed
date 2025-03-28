@@ -5,7 +5,7 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
+    --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
 
     --card: 0 0% 100%;
@@ -14,16 +14,16 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 199 89% 48%;
+    --primary: 214 100% 50%;
     --primary-foreground: 210 40% 98%;
 
-    --secondary: 210 40% 96.1%;
+    --secondary: 47 100% 50%;
     --secondary-foreground: 222.2 47.4% 11.2%;
 
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
-    --accent: 199 89% 48%;
+    --accent: 47 100% 50%;
     --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
@@ -31,18 +31,18 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 199 89% 48%;
+    --ring: 214 100% 50%;
 
     --radius: 0.5rem;
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 214 100% 98%;
+    --sidebar-foreground: 220 14% 20%;
+    --sidebar-primary: 214 100% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 47 100% 50%;
+    --sidebar-accent-foreground: 220 14% 20%;
+    --sidebar-border: 214 60% 90%;
+    --sidebar-ring: 214 100% 50%;
   }
 
   .dark {
@@ -55,16 +55,16 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 199 89% 48%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 214 100% 50%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 47 100% 50%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
 
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
 
-    --accent: 199 89% 48%;
+    --accent: 47 100% 50%;
     --accent-foreground: 210 40% 98%;
 
     --destructive: 0 62.8% 30.6%;
@@ -72,16 +72,16 @@
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 199 89% 48%;
+    --ring: 214 100% 50%;
     
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-background: 222 14% 18%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-primary: 214 100% 50%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 47 100% 50%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 217.2 32.6% 17.5%;
+    --sidebar-ring: 214 100% 50%;
   }
 }
 
@@ -94,8 +94,8 @@
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
     background-image: 
-      radial-gradient(circle at 15% 50%, rgba(var(--primary), 0.05) 0%, transparent 30%),
-      radial-gradient(circle at 85% 30%, rgba(var(--accent), 0.05) 0%, transparent 30%);
+      radial-gradient(circle at 15% 50%, rgba(0, 123, 255, 0.05) 0%, transparent 30%),
+      radial-gradient(circle at 85% 30%, rgba(255, 215, 0, 0.05) 0%, transparent 30%);
     background-attachment: fixed;
   }
   
@@ -110,11 +110,11 @@
   }
   
   ::-webkit-scrollbar-thumb {
-    @apply bg-primary/20 rounded-full;
+    @apply bg-trustBlue/20 rounded-full;
   }
   
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-primary/40;
+    @apply bg-trustBlue/40;
   }
 }
 
@@ -124,7 +124,7 @@
   }
   
   .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent animate-gradient-shift bg-[length:200%_auto];
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-trustBlue to-gold animate-gradient-shift bg-[length:200%_auto];
   }
   
   .glass {
@@ -140,7 +140,7 @@
   }
   
   .link-underline {
-    @apply relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-left after:scale-x-0 after:bg-primary after:transition-transform after:duration-300 hover:after:scale-x-100;
+    @apply relative after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-bottom-left after:scale-x-0 after:bg-trustBlue after:transition-transform after:duration-300 hover:after:scale-x-100;
   }
   
   /* Futuristic Components */
@@ -149,7 +149,7 @@
   }
   
   .neo-button {
-    @apply rounded-full px-6 py-2 bg-gradient-to-r from-primary to-accent text-white shadow-lg shadow-primary/20 hover:shadow-primary/40 transition-all hover:-translate-y-1;
+    @apply rounded-full px-6 py-2 bg-gradient-to-r from-trustBlue to-gold text-white shadow-lg shadow-trustBlue/20 hover:shadow-trustBlue/40 transition-all hover:-translate-y-1;
   }
   
   .glow {
@@ -157,7 +157,7 @@
   }
   
   .glow::before {
-    @apply content-[''] absolute inset-0 -z-10 bg-gradient-to-r from-primary/20 to-accent/20 rounded-xl blur-xl opacity-50 transition-opacity duration-300;
+    @apply content-[''] absolute inset-0 -z-10 bg-gradient-to-r from-trustBlue/20 to-gold/20 rounded-xl blur-xl opacity-50 transition-opacity duration-300;
   }
   
   .glow:hover::before {
@@ -173,7 +173,7 @@
   }
   
   .techline::after {
-    @apply content-[''] absolute h-0.5 w-full bg-primary/30 bottom-0 left-0;
+    @apply content-[''] absolute h-0.5 w-full bg-trustBlue/30 bottom-0 left-0;
     animation: techline-scan 3s linear infinite;
   }
   
@@ -184,7 +184,7 @@
   
   .cyber-border {
     @apply p-0.5 relative rounded-xl;
-    background: linear-gradient(90deg, hsl(var(--primary)), hsl(var(--accent)));
+    background: linear-gradient(90deg, #007BFF, #FFD700);
   }
   
   .cyber-border::before {
