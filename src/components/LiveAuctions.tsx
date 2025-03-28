@@ -67,11 +67,73 @@ const SAMPLE_AUCTIONS = [
     imageUrl: "https://images.unsplash.com/photo-1567808291548-fc3ee04dbcf0?auto=format&fit=crop&q=80&w=600&h=400",
     category: "Cars",
     isExternal: false
+  },
+  {
+    id: "7",
+    title: "2021 Lamborghini Aventador SVJ",
+    currentBid: 450000,
+    bids: 32,
+    timeRemaining: "1d 5h",
+    imageUrl: "https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&q=80&w=600&h=400",
+    category: "Luxury Cars",
+    isExternal: false
+  },
+  {
+    id: "8",
+    title: "1957 Chevrolet Bel Air",
+    currentBid: 68000,
+    bids: 19,
+    timeRemaining: "3d 2h",
+    imageUrl: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=600&h=400",
+    category: "Classic Cars",
+    isExternal: false
+  },
+  {
+    id: "9",
+    title: "Modern Abstract Canvas by J. Thompson",
+    currentBid: 5400,
+    bids: 8,
+    timeRemaining: "12h 20m",
+    imageUrl: "https://images.unsplash.com/photo-1501084817091-a4f3d1d19e07?auto=format&fit=crop&q=80&w=600&h=400",
+    category: "Modern Art",
+    isExternal: true,
+    externalUrl: "#"
+  },
+  {
+    id: "10",
+    title: "19th Century Landscape Painting",
+    currentBid: 9200,
+    bids: 15,
+    timeRemaining: "1d 18h",
+    imageUrl: "https://images.unsplash.com/photo-1579762715118-a6f1d4b934f1?auto=format&fit=crop&q=80&w=600&h=400",
+    category: "Paintings",
+    isExternal: false
+  },
+  {
+    id: "11",
+    title: "Mediterranean Villa with Ocean View",
+    currentBid: 1850000,
+    bids: 7,
+    timeRemaining: "5d 8h",
+    imageUrl: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=600&h=400",
+    category: "Luxury Homes",
+    isExternal: false
+  },
+  {
+    id: "12",
+    title: "Victorian Manor in Historic District",
+    currentBid: 950000,
+    bids: 5,
+    timeRemaining: "6d 12h",
+    imageUrl: "https://images.unsplash.com/photo-1600607688969-a48377e0d24e?auto=format&fit=crop&q=80&w=600&h=400",
+    category: "Historic Properties",
+    isExternal: true,
+    externalUrl: "#"
   }
 ];
 
 // Categories
-const CATEGORIES = ["All", "Watches", "Art", "Furniture", "Electronics", "Books", "Cars", "Sports"];
+const CATEGORIES = ["All", "Watches", "Art", "Furniture", "Electronics", "Books", "Cars", "Sports", "Luxury Cars", "Classic Cars", "Paintings", "Modern Art", "Luxury Homes", "Historic Properties"];
 
 const LiveAuctions = () => {
   const [activeCategory, setActiveCategory] = useState("All");

@@ -8,7 +8,7 @@ const CATEGORIES = [
     id: "watches",
     name: "Watches",
     description: "Luxury and collectible timepieces",
-    imageUrl: "https://images.unsplash.com/photo-1539874754764-5a96559165b0?auto=format&fit=crop&q=80&w=600&h=400",
+    imageUrl: "https://images.unsplash.com/photo-1547996160-81dfa63595aa?auto=format&fit=crop&q=80&w=600&h=400",
     itemCount: 253
   },
   {
@@ -59,6 +59,62 @@ const CATEGORIES = [
     description: "Sports memorabilia and collectibles",
     imageUrl: "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&q=80&w=600&h=400",
     itemCount: 95
+  },
+  {
+    id: "luxury-cars",
+    name: "Luxury Cars",
+    description: "Premium and exotic automobiles",
+    imageUrl: "https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&q=80&w=600&h=400",
+    itemCount: 78
+  },
+  {
+    id: "classic-cars",
+    name: "Classic Cars",
+    description: "Vintage and classic automobile collectibles",
+    imageUrl: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=600&h=400",
+    itemCount: 65
+  },
+  {
+    id: "paintings",
+    name: "Paintings",
+    description: "Original paintings from renowned artists",
+    imageUrl: "https://images.unsplash.com/photo-1579762715118-a6f1d4b934f1?auto=format&fit=crop&q=80&w=600&h=400",
+    itemCount: 104
+  },
+  {
+    id: "modern-art",
+    name: "Modern Art",
+    description: "Contemporary and modern art pieces",
+    imageUrl: "https://images.unsplash.com/photo-1501084817091-a4f3d1d19e07?auto=format&fit=crop&q=80&w=600&h=400",
+    itemCount: 83
+  },
+  {
+    id: "luxury-homes",
+    name: "Luxury Homes",
+    description: "Exclusive properties and estates",
+    imageUrl: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=600&h=400",
+    itemCount: 42
+  },
+  {
+    id: "historic-properties",
+    name: "Historic Properties",
+    description: "Heritage buildings and historic estates",
+    imageUrl: "https://images.unsplash.com/photo-1600607688969-a48377e0d24e?auto=format&fit=crop&q=80&w=600&h=400",
+    itemCount: 38
+  },
+  {
+    id: "sculptures",
+    name: "Sculptures",
+    description: "Fine art sculptures and installations",
+    imageUrl: "https://images.unsplash.com/photo-1544413164-48043e676633?auto=format&fit=crop&q=80&w=600&h=400",
+    itemCount: 76
+  },
+  {
+    id: "antiques",
+    name: "Antiques",
+    description: "Rare and valuable historical items",
+    imageUrl: "https://images.unsplash.com/photo-1505323686786-3a92f478f009?auto=format&fit=crop&q=80&w=600&h=400",
+    itemCount: 122
   }
 ];
 
