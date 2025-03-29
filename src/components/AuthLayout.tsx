@@ -28,16 +28,41 @@ const AuthLayout = ({
     ? `/${otherUserType}-signin` 
     : `/${otherUserType}-signup`;
 
+  // Background pattern based on user type
+  const bgPattern = userType === "user" 
+    ? "radial-gradient(circle at 20% 70%, rgba(0, 123, 255, 0.15) 0%, transparent 40%), radial-gradient(circle at 80% 40%, rgba(255, 215, 0, 0.1) 0%, transparent 30%)"
+    : "radial-gradient(circle at 80% 70%, rgba(0, 123, 255, 0.15) 0%, transparent 40%), radial-gradient(circle at 20% 30%, rgba(255, 215, 0, 0.1) 0%, transparent 30%)";
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
+    <div 
+      className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 px-4 relative overflow-hidden"
+      style={{ 
+        backgroundImage: bgPattern,
+        backgroundAttachment: "fixed"
+      }}
+    >
+      {/* Animated background elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <div className="absolute -left-20 -top-20 w-60 h-60 rounded-full bg-trustBlue/5 backdrop-blur-3xl animate-float"></div>
+        <div className="absolute right-10 bottom-10 w-80 h-80 rounded-full bg-gold/5 backdrop-blur-3xl animate-float" style={{ animationDelay: "2s" }}></div>
+        <div className="absolute left-1/4 bottom-10 w-40 h-40 rounded-full bg-trustBlue/5 backdrop-blur-3xl animate-float" style={{ animationDelay: "1s" }}></div>
+        
+        {/* Tech lines */}
+        <div className="absolute top-[20%] left-0 w-full h-px bg-gradient-to-r from-transparent via-trustBlue/20 to-transparent techline"></div>
+        <div className="absolute top-[80%] left-0 w-full h-px bg-gradient-to-r from-transparent via-gold/20 to-transparent techline" style={{ animationDelay: "1.5s" }}></div>
+      </div>
+      
       <Link
         to="/"
-        className="absolute top-6 left-6 text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-gray-300 transition-colors"
+        className="absolute top-6 left-6 text-gray-600 hover:text-primary dark:text-gray-400 dark:hover:text-gray-300 transition-colors z-10"
       >
         ← Back to Home
       </Link>
       
-      <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 space-y-6">
+      <div className="w-full max-w-md bg-white/80 dark:bg-gray-800/80 backdrop-blur-md rounded-lg shadow-lg p-8 space-y-6 relative z-10 border border-white/20 dark:border-gray-700/30">
+        {/* Glow effect */}
+        <div className="absolute inset-0 -z-10 bg-gradient-to-r from-trustBlue/10 to-gold/10 rounded-lg blur-xl opacity-50"></div>
+        
         <div className="text-center">
           <Link 
             to="/" 
@@ -54,6 +79,9 @@ const AuthLayout = ({
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{title}</h1>
           <p className="text-gray-600 dark:text-gray-400 mt-2">{subtitle}</p>
         </div>
+        
+        {/* Horizontal tech line */}
+        <div className="h-px w-full bg-gradient-to-r from-transparent via-trustBlue/30 to-transparent my-4"></div>
         
         {children}
         
@@ -75,6 +103,12 @@ const AuthLayout = ({
             {otherUserTypeLabel}
           </Link>
         </div>
+      </div>
+      
+      {/* Footer tech details */}
+      <div className="mt-6 text-xs text-gray-500 dark:text-gray-600 flex items-center gap-2">
+        <div className="w-2 h-2 bg-trustBlue/30 rounded-full animate-pulse"></div>
+        {userType === "user" ? "Personal Account System" : "Business Account System"} • Secured with Advanced Encryption
       </div>
     </div>
   );

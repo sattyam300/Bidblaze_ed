@@ -7,7 +7,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Loader2 } from "lucide-react";
+import { Loader2, User, AtSign, Lock, ShieldCheck } from "lucide-react";
 import AuthLayout from "@/components/AuthLayout";
 import { toast } from "sonner";
 import PasswordInput from "@/components/PasswordInput";
@@ -85,10 +85,16 @@ const UserSignUp = () => {
             control={form.control}
             name="name"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Full Name</FormLabel>
+              <FormItem className="cyber-border">
+                <FormLabel className="flex items-center gap-2">
+                  <User className="h-4 w-4 text-primary" /> Full Name
+                </FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter your full name" {...field} />
+                  <Input 
+                    placeholder="Enter your full name" 
+                    {...field} 
+                    className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -99,45 +105,64 @@ const UserSignUp = () => {
             control={form.control}
             name="email"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Email</FormLabel>
+              <FormItem className="cyber-border">
+                <FormLabel className="flex items-center gap-2">
+                  <AtSign className="h-4 w-4 text-primary" /> Email
+                </FormLabel>
                 <FormControl>
-                  <Input placeholder="Enter your email" {...field} />
+                  <Input 
+                    placeholder="Enter your email" 
+                    {...field} 
+                    className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm"
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
           
-          <PasswordInput 
-            form={form} 
-            name="password" 
-            label="Password" 
-            placeholder="Create a password" 
-          />
-          
-          <PasswordInput 
-            form={form} 
-            name="confirmPassword" 
-            label="Confirm Password" 
-            placeholder="Confirm your password" 
-          />
-          
-          <div className="flex items-center space-x-2">
-            <input 
-              type="checkbox" 
-              id="terms" 
-              className="rounded border-gray-300 text-primary focus:ring-primary"
-              checked={termsAccepted}
-              onChange={(e) => setTermsAccepted(e.target.checked)}
-              required
+          <div className="space-y-4 cyber-border p-4">
+            <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-2">
+              <Lock className="h-4 w-4 text-primary" />
+              <span>Secure Password</span>
+            </div>
+            
+            <PasswordInput 
+              form={form} 
+              name="password" 
+              label="Password" 
+              placeholder="Create a password" 
             />
-            <label htmlFor="terms" className="text-sm text-gray-600 dark:text-gray-400">
-              I agree to the <a href="#" className="text-primary hover:underline">Terms of Service</a> and <a href="#" className="text-primary hover:underline">Privacy Policy</a>
-            </label>
+            
+            <PasswordInput 
+              form={form} 
+              name="confirmPassword" 
+              label="Confirm Password" 
+              placeholder="Confirm your password" 
+            />
           </div>
           
-          <Button type="submit" className="w-full" disabled={isLoading}>
+          <div className="neo-card p-4">
+            <div className="flex items-center gap-2 text-sm text-primary mb-2">
+              <ShieldCheck className="h-4 w-4" />
+              <span className="font-medium">Terms & Conditions</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <input 
+                type="checkbox" 
+                id="terms" 
+                className="rounded border-gray-300 text-primary focus:ring-primary"
+                checked={termsAccepted}
+                onChange={(e) => setTermsAccepted(e.target.checked)}
+                required
+              />
+              <label htmlFor="terms" className="text-sm text-gray-600 dark:text-gray-400">
+                I agree to the <a href="#" className="text-primary hover:underline">Terms of Service</a> and <a href="#" className="text-primary hover:underline">Privacy Policy</a>
+              </label>
+            </div>
+          </div>
+          
+          <Button type="submit" className="w-full neo-button" disabled={isLoading}>
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />

@@ -1,9 +1,10 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Loader2 } from "lucide-react";
+import { Loader2, Building2, AtSign, Phone, FileText, Lock, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -79,10 +80,16 @@ const SellerRegistrationForm = () => {
           control={form.control}
           name="businessName"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Business Name</FormLabel>
+            <FormItem className="cyber-border">
+              <FormLabel className="flex items-center gap-2">
+                <Building2 className="h-4 w-4 text-primary" /> Business Name
+              </FormLabel>
               <FormControl>
-                <Input placeholder="Enter your business name" {...field} />
+                <Input 
+                  placeholder="Enter your business name" 
+                  {...field} 
+                  className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -93,10 +100,16 @@ const SellerRegistrationForm = () => {
           control={form.control}
           name="email"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Email</FormLabel>
+            <FormItem className="cyber-border">
+              <FormLabel className="flex items-center gap-2">
+                <AtSign className="h-4 w-4 text-primary" /> Email
+              </FormLabel>
               <FormControl>
-                <Input placeholder="Enter your business email" {...field} />
+                <Input 
+                  placeholder="Enter your business email" 
+                  {...field} 
+                  className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -107,10 +120,16 @@ const SellerRegistrationForm = () => {
           control={form.control}
           name="phone"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Phone Number</FormLabel>
+            <FormItem className="cyber-border">
+              <FormLabel className="flex items-center gap-2">
+                <Phone className="h-4 w-4 text-primary" /> Phone Number
+              </FormLabel>
               <FormControl>
-                <Input placeholder="Enter your business phone" {...field} />
+                <Input 
+                  placeholder="Enter your business phone" 
+                  {...field} 
+                  className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -121,12 +140,14 @@ const SellerRegistrationForm = () => {
           control={form.control}
           name="description"
           render={({ field }) => (
-            <FormItem>
-              <FormLabel>Business Description</FormLabel>
+            <FormItem className="cyber-border">
+              <FormLabel className="flex items-center gap-2">
+                <FileText className="h-4 w-4 text-primary" /> Business Description
+              </FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="Describe your business and the types of items you will be selling"
-                  className="min-h-[100px]"
+                  className="min-h-[100px] bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm"
                   {...field}
                 />
               </FormControl>
@@ -135,26 +156,39 @@ const SellerRegistrationForm = () => {
           )}
         />
         
-        <PasswordInput 
-          form={form} 
-          name="password" 
-          label="Password" 
-          placeholder="Create a password" 
-        />
+        <div className="space-y-4 cyber-border p-4">
+          <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-2">
+            <Lock className="h-4 w-4 text-primary" />
+            <span>Secure Password</span>
+          </div>
+          
+          <PasswordInput 
+            form={form} 
+            name="password" 
+            label="Password" 
+            placeholder="Create a password" 
+          />
+          
+          <PasswordInput 
+            form={form} 
+            name="confirmPassword" 
+            label="Confirm Password" 
+            placeholder="Confirm your password" 
+          />
+        </div>
         
-        <PasswordInput 
-          form={form} 
-          name="confirmPassword" 
-          label="Confirm Password" 
-          placeholder="Confirm your password" 
-        />
+        <div className="neo-card p-4">
+          <div className="flex items-center gap-2 text-sm text-primary mb-2">
+            <ShieldCheck className="h-4 w-4" />
+            <span className="font-medium">Terms & Conditions</span>
+          </div>
+          <TermsCheckbox 
+            checked={termsAccepted}
+            onChange={setTermsAccepted}
+          />
+        </div>
         
-        <TermsCheckbox 
-          checked={termsAccepted}
-          onChange={setTermsAccepted}
-        />
-        
-        <Button type="submit" className="w-full" disabled={isLoading}>
+        <Button type="submit" className="w-full neo-button" disabled={isLoading}>
           {isLoading ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />

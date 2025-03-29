@@ -29,13 +29,14 @@ const PasswordInput = ({ form, name, label, placeholder }: PasswordInputProps) =
               <Input
                 type={showPassword ? "text" : "password"}
                 placeholder={placeholder}
+                className="bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm pr-10"
                 {...field}
               />
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="absolute right-0 top-0 h-full"
+                className="absolute right-0 top-0 h-full text-gray-500 hover:text-primary"
                 onClick={() => setShowPassword(!showPassword)}
               >
                 {showPassword ? (
