@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -13,6 +12,7 @@ import UserSignUp from "./pages/UserSignUp";
 import SellerSignIn from "./pages/SellerSignIn";
 import SellerSignUp from "./pages/SellerSignUp";
 import Profile from "./pages/Profile";
+import UserProfile from "./pages/UserProfile";
 import MakeBid from "./pages/MakeBid";
 import ExternalAuctions from "./pages/ExternalAuctions";
 
@@ -31,6 +31,7 @@ const App = () => (
           <Route path="/auctions" element={<Auctions />} />
           <Route path="/about" element={<About />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/user-profile" element={<UserProfile />} />
           <Route path="/external-auctions" element={<ExternalAuctions />} />
           
           {/* Auction & Bidding Routes */}
