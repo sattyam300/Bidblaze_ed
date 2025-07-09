@@ -1,91 +1,122 @@
 
-import React, { createContext, useContext, useEffect, useState } from 'react';
-import { User, Session } from '@supabase/supabase-js';
-import { supabase } from '@/integrations/supabase/client';
+import React, { createContext, useContext, useEffect, useState } from 'react'
 
-interface AuthContextType {
-  user: User | null;
-  session: Session | null;
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: any }>;
-  signIn: (email: string, password: string) => Promise<{ error: any }>;
-  signOut: () => Promise<void>;
-  loading: boolean;
+interface User {
+  id: string
+  email: string
+  full_name: string
+  role: 'buyer' | 'seller' | 'admin'
+  avatar_url?: string
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+interface AuthContextType {
+  user: User | null
+  signUp: (email: string, password: string, fullName: string, role?: string) => Promise<{ error: any }>
+  signIn: (email: string, password: string) => Promise<{ error: any }>
+  signOut: () => Promise<void>
+  loading: boolean
+}
+
+const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const useAuth = () => {
-  const context = useContext(AuthContext);
+  const context = useContext(AuthContext)
   if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error('useAuth must be used within an AuthProvider')
   }
-  return context;
-};
+  return context
+}
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState<User | null>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
-        console.log('Auth state changed:', event, session?.user?.email);
-        setSession(session);
-        setUser(session?.user ?? null);
-        setLoading(false);
+    // Check if user is logged in on mount
+    checkAuth()
+  }, [])
+
+  const checkAuth = async () => {
+    try {
+      const response = await fetch('/api/auth/me')
+      if (response.ok) {
+        const userData = await response.json()
+        setUser(userData.user)
       }
-    );
+    } catch (error) {
+      console.error('Auth check failed:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
-    // Check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  const signUp = async (email: string, password: string, fullName: string) => {
-    const redirectUrl = `${window.location.origin}/`;
-    
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: redirectUrl,
-        data: {
+  const signUp = async (email: string, password: string, fullName: string, role = 'buyer') => {
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          password,
           full_name: fullName,
-        }
+          role
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setUser(data.user)
+        return { error: null }
+      } else {
+        return { error: { message: data.message } }
       }
-    });
-    
-    return { error };
-  };
+    } catch (error) {
+      return { error: { message: 'Network error occurred' } }
+    }
+  }
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    
-    return { error };
-  };
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok) {
+        setUser(data.user)
+        return { error: null }
+      } else {
+        return { error: { message: data.message } }
+      }
+    } catch (error) {
+      return { error: { message: 'Network error occurred' } }
+    }
+  }
 
   const signOut = async () => {
-    await supabase.auth.signOut();
-  };
+    try {
+      await fetch('/api/auth/logout', { method: 'POST' })
+      setUser(null)
+    } catch (error) {
+      console.error('Logout error:', error)
+    }
+  }
 
   const value = {
     user,
-    session,
     signUp,
     signIn,
     signOut,
     loading,
-  };
+  }
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+}

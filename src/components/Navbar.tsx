@@ -18,14 +18,12 @@ import {
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
-import { useUserProfile } from "@/hooks/useUserProfile";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const { user, signOut, loading: authLoading } = useAuth();
-  const { profile, loading: profileLoading } = useUserProfile(user);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -63,8 +61,7 @@ const Navbar = () => {
   ];
 
   const getUserDisplayName = () => {
-    if (profile?.full_name) return profile.full_name;
-    if (user?.user_metadata?.full_name) return user.user_metadata.full_name;
+    if (user?.full_name) return user.full_name;
     if (user?.email) return user.email.split('@')[0];
     return "User";
   };
@@ -204,7 +201,7 @@ const Navbar = () => {
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="flex items-center gap-2 p-2 h-auto">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={profile?.avatar_url || user?.user_metadata?.avatar_url} />
+                      <AvatarImage src={user?.avatar_url} />
                       <AvatarFallback className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs">
                         {getUserInitials()}
                       </AvatarFallback>
@@ -406,7 +403,7 @@ const Navbar = () => {
                 <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
                   <div className="flex items-center gap-3 py-2">
                     <Avatar className="h-8 w-8">
-                      <AvatarImage src={profile?.avatar_url || user?.user_metadata?.avatar_url} />
+                      <AvatarImage src={user?.avatar_url} />
                       <AvatarFallback className="bg-gradient-to-r from-red-500 to-orange-500 text-white text-xs">
                         {getUserInitials()}
                       </AvatarFallback>
