@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Checkbox } from "@/components/ui/checkbox";
 import AuthLayout from "@/components/AuthLayout";
+import { useAuth } from "@/contexts/AuthContext";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Please enter a valid email address." }),
@@ -19,7 +20,9 @@ const formSchema = z.object({
 
 const SellerSignIn = () => {
   const navigate = useNavigate();
+  const { signIn } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -30,18 +33,27 @@ const SellerSignIn = () => {
     },
   });
   
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      console.log(values);
+    setError("");
+    try {
+      const { error } = await signIn(values.email, values.password);
+      if (error) {
+        setError(error.message || "Sign in failed");
+      } else {
+        // Check if the user is a seller
+        const user = JSON.parse(localStorage.getItem("user") || "null");
+        if (user && user.role === "seller") {
+          navigate("/profile");
+        } else {
+          setError("You must sign in with a seller account.");
+        }
+      }
+    } catch (err) {
+      setError("An unexpected error occurred. Please try again later.");
+    } finally {
       setIsLoading(false);
-      toast.success("Successfully signed in as a seller!");
-      
-      // Redirect to profile page after successful login
-      navigate("/profile");
-    }, 1500);
+    }
   }
   
   return (
@@ -107,6 +119,7 @@ const SellerSignIn = () => {
             </Button>
           </div>
           
+          {error && <div className="text-red-600 text-sm">{error}</div>}
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading ? "Signing in..." : "Sign In"}
           </Button>

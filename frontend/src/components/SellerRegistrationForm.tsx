@@ -12,6 +12,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { toast } from "sonner";
 import PasswordInput from "./PasswordInput";
 import TermsCheckbox from "./TermsCheckbox";
+import { useAuth } from "@/contexts/AuthContext";
 
 // Form schema validation
 const formSchema = z.object({
@@ -28,8 +29,10 @@ const formSchema = z.object({
 
 const SellerRegistrationForm = () => {
   const navigate = useNavigate();
+  const { signUp } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [error, setError] = useState("");
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -50,24 +53,20 @@ const SellerRegistrationForm = () => {
       });
       return;
     }
-
     setIsLoading(true);
+    setError("");
     try {
-      // Simulate registration process
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      // Success! Show success message
-      toast("Seller account created!", {
-        description: "Your application has been submitted for review"
-      });
-
-      // Redirect to sign-in page after successful registration
-      setTimeout(() => navigate("/seller-signin"), 1500);
-    } catch (error) {
-      console.error("Registration error:", error);
-      toast("Registration failed", {
-        description: error instanceof Error ? error.message : "Please try again later"
-      });
+      const { error } = await signUp(values.email, values.password, values.businessName, "seller");
+      if (error) {
+        setError(error.message || "Registration failed");
+        toast("Registration failed", { description: error.message || "Please try again later" });
+      } else {
+        toast("Seller account created!", { description: "Your seller account has been created." });
+        setTimeout(() => navigate("/seller-signin"), 1500);
+      }
+    } catch (err) {
+      setError("An unexpected error occurred. Please try again later.");
+      toast("Registration failed", { description: "An unexpected error occurred. Please try again later" });
     } finally {
       setIsLoading(false);
     }
@@ -188,6 +187,7 @@ const SellerRegistrationForm = () => {
           />
         </div>
         
+        {error && <div className="text-red-600 text-sm">{error}</div>}
         <Button type="submit" className="w-full neo-button" disabled={isLoading}>
           {isLoading ? (
             <>

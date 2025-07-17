@@ -22,7 +22,7 @@ const EnvConfigDialog = ({ open, onOpenChange }: EnvConfigDialogProps) => {
           <DialogDescription>
             {isSupabaseConfigured 
               ? "Your Supabase project is connected. You can now use Supabase functionality."
-              : "To use the Supabase integration, you need to connect your Supabase project in the Lovable dashboard."
+              : "To use the Supabase integration, you need to connect your Supabase project."
             }
           </DialogDescription>
         </DialogHeader>

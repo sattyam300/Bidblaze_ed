@@ -38,13 +38,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const checkAuth = async () => {
     try {
-      const response = await fetch('/api/auth/me')
+      const token = localStorage.getItem('auth-token')
+      const response = await fetch('/api/auth/me', {
+        headers: {
+          'Authorization': token ? `Bearer ${token}` : '',
+        },
+      })
       if (response.ok) {
         const userData = await response.json()
         setUser(userData.user)
+      } else {
+        // Clear token if auth check fails
+        localStorage.removeItem('auth-token')
       }
     } catch (error) {
       console.error('Auth check failed:', error)
+      localStorage.removeItem('auth-token')
     } finally {
       setLoading(false)
     }
@@ -68,6 +77,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const data = await response.json()
 
       if (response.ok) {
+        // Store token in localStorage
+        if (data.token) {
+          localStorage.setItem('auth-token', data.token)
+        }
         setUser(data.user)
         return { error: null }
       } else {
@@ -91,6 +104,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const data = await response.json()
 
       if (response.ok) {
+        // Store token in localStorage
+        if (data.token) {
+          localStorage.setItem('auth-token', data.token)
+        }
         setUser(data.user)
         return { error: null }
       } else {
@@ -103,10 +120,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signOut = async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST' })
+      const token = localStorage.getItem('auth-token')
+      await fetch('/api/auth/logout', { 
+        method: 'POST',
+        headers: {
+          'Authorization': token ? `Bearer ${token}` : '',
+        },
+      })
+      localStorage.removeItem('auth-token')
       setUser(null)
     } catch (error) {
       console.error('Logout error:', error)
+      localStorage.removeItem('auth-token')
+      setUser(null)
     }
   }
 
