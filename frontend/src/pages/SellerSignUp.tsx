@@ -1,26 +1,9 @@
 
-import { useState } from "react";
-import AuthLayout from "@/components/AuthLayout";
-import SellerRegistrationForm from "@/components/SellerRegistrationForm";
-
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 const SellerSignUp = () => {
-  return (
-    <>
-      <AuthLayout
-        title="Register as a Seller"
-        subtitle="Create a seller account to list your items for auction"
-        footer={{
-          text: "Already have a seller account?",
-          linkText: "Sign in",
-          linkTo: "/seller-signin",
-        }}
-        userType="seller"
-        isLogin={false}
-      >
-        <SellerRegistrationForm />
-      </AuthLayout>
-    </>
-  );
+  const navigate = useNavigate();
+  useEffect(() => { navigate('/auth'); }, [navigate]);
+  return null;
 };
-
 export default SellerSignUp;

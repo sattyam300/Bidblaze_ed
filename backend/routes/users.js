@@ -1,7 +1,7 @@
 
 const express = require('express');
 const { body, validationResult } = require('express-validator');
-const User = require('../models/User');
+const UserDatabase = require('../models/User');
 const Auction = require('../models/Auction');
 const Bid = require('../models/Bid');
 const { auth, authorize } = require('../middleware/auth');
@@ -11,7 +11,7 @@ const router = express.Router();
 // Get user profile
 router.get('/profile', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user._id);
+    const user = await UserDatabase.findById(req.user._id);
     
     // Get user stats
     const stats = {
@@ -21,19 +21,18 @@ router.get('/profile', auth, async (req, res) => {
       active_bids: 0
     };
 
-    if (user.role === 'seller' || user.role === 'admin') {
-      stats.total_auctions = await Auction.countDocuments({ seller_id: user._id });
+    // Only count auctions/bids if user exists
+    if (user) {
+      stats.total_bids = await Bid.countDocuments({ bidder_id: user._id });
+      stats.won_auctions = await Bid.countDocuments({ 
+        bidder_id: user._id, 
+        is_winning: true 
+      });
+      stats.active_bids = await Bid.countDocuments({ 
+        bidder_id: user._id, 
+        status: 'active' 
+      });
     }
-
-    stats.total_bids = await Bid.countDocuments({ bidder_id: user._id });
-    stats.won_auctions = await Bid.countDocuments({ 
-      bidder_id: user._id, 
-      is_winning: true 
-    });
-    stats.active_bids = await Bid.countDocuments({ 
-      bidder_id: user._id, 
-      status: 'active' 
-    });
 
     res.json({
       user,
@@ -63,7 +62,7 @@ router.put('/profile', [
 
     const { full_name, phone, address, avatar_url } = req.body;
 
-    const updatedUser = await User.findByIdAndUpdate(
+    const updatedUser = await UserDatabase.findByIdAndUpdate(
       req.user._id,
       {
         ...(full_name && { full_name }),
@@ -98,7 +97,7 @@ router.put('/change-password', [
     const { current_password, new_password } = req.body;
 
     // Get user with password
-    const user = await User.findById(req.user._id).select('+password');
+    const user = await UserDatabase.findById(req.user._id).select('+password');
     
     // Verify current password
     const isMatch = await user.comparePassword(current_password);
@@ -162,7 +161,7 @@ router.put('/deactivate', auth, async (req, res) => {
       });
     }
 
-    await User.findByIdAndUpdate(req.user._id, { is_active: false });
+    await UserDatabase.findByIdAndUpdate(req.user._id, { is_active: false });
 
     res.json({ message: 'Account deactivated successfully' });
   } catch (error) {

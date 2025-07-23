@@ -10,6 +10,7 @@ import { NotificationsDropdown } from "./navbar/NotificationsDropdown";
 import { UserDropdown } from "./navbar/UserDropdown";
 import { AuthButtons } from "./navbar/AuthButtons";
 import { MobileMenu } from "./navbar/MobileMenu";
+import ThemeToggle from "./ThemeToggle";
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -49,7 +50,7 @@ const Navbar = () => {
             <Button variant="ghost" size="icon" className="text-gray-700 dark:text-gray-200">
               <Search className="h-5 w-5" />
             </Button>
-            
+            <ThemeToggle />
             {user && <NotificationsDropdown />}
             
             {authLoading ? (

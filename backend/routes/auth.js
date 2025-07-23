@@ -2,7 +2,8 @@
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const { body, validationResult } = require('express-validator');
-const User = require('../models/User');
+const UserDatabase = require('../models/User');
+const SellerDatabase = require('../models/Seller');
 const { auth } = require('../middleware/auth');
 
 const router = express.Router();
@@ -16,7 +17,8 @@ const generateToken = (userId) => {
 
 // Register
 router.post('/register', [
-  body('full_name').trim().isLength({ min: 2, max: 100 }),
+  body('full_name').optional().trim().isLength({ min: 2, max: 100 }),
+  body('business_name').optional().trim().isLength({ min: 2, max: 100 }),
   body('email').isEmail().normalizeEmail(),
   body('password').isLength({ min: 6 }),
   body('role').optional().isIn(['user', 'seller'])
@@ -27,37 +29,48 @@ router.post('/register', [
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { full_name, email, password, role = 'user', phone, address } = req.body;
+    const { full_name, business_name, email, password, role = 'user', phone, address } = req.body;
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
-      return res.status(400).json({ message: 'User already exists with this email' });
+    let existingUser, user;
+    if (role === 'seller') {
+      existingUser = await SellerDatabase.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ message: 'Seller already exists with this email' });
+      }
+      user = new SellerDatabase({
+        business_name: business_name || full_name,
+        email,
+        password,
+        phone,
+        address
+      });
+      await user.save();
+    } else {
+      existingUser = await UserDatabase.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ message: 'User already exists with this email' });
+      }
+      user = new UserDatabase({
+        full_name: full_name || business_name,
+        email,
+        password,
+        phone,
+        address
+      });
+      await user.save();
     }
-
-    // Create user
-    const user = new User({
-      full_name,
-      email,
-      password,
-      role,
-      phone,
-      address
-    });
-
-    await user.save();
 
     // Generate token
     const token = generateToken(user._id);
 
     res.status(201).json({
-      message: 'User registered successfully',
+      message: `${role.charAt(0).toUpperCase() + role.slice(1)} registered successfully`,
       token,
       user: {
         id: user._id,
-        full_name: user.full_name,
+        name: user.full_name || user.business_name,
         email: user.email,
-        role: user.role
+        role
       }
     });
   } catch (error) {
@@ -68,7 +81,8 @@ router.post('/register', [
 // Login
 router.post('/login', [
   body('email').isEmail().normalizeEmail(),
-  body('password').exists()
+  body('password').exists(),
+  body('role').optional().isIn(['user', 'seller'])
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -76,40 +90,34 @@ router.post('/login', [
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { email, password } = req.body;
-
-    // Find user and include password for comparison
-    const user = await User.findOne({ email }).select('+password');
+    const { email, password, role = 'user' } = req.body;
+    let user;
+    if (role === 'seller') {
+      user = await SellerDatabase.findOne({ email }).select('+password');
+    } else {
+      user = await UserDatabase.findOne({ email }).select('+password');
+    }
     if (!user) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
-
-    // Check password
     const isMatch = await user.comparePassword(password);
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
-
-    // Check if account is active
     if (!user.is_active) {
       return res.status(401).json({ message: 'Account is deactivated' });
     }
-
-    // Update last login
     user.last_login = new Date();
     await user.save();
-
-    // Generate token
     const token = generateToken(user._id);
-
     res.json({
       message: 'Login successful',
       token,
       user: {
         id: user._id,
-        full_name: user.full_name,
+        name: user.full_name || user.business_name,
         email: user.email,
-        role: user.role
+        role
       }
     });
   } catch (error) {

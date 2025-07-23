@@ -1,13 +1,12 @@
-
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-const userSchema = new mongoose.Schema({
-  full_name: {
+const sellerSchema = new mongoose.Schema({
+  business_name: {
     type: String,
-    required: [true, 'Full name is required'],
+    required: [true, 'Business name is required'],
     trim: true,
-    maxlength: [100, 'Name cannot exceed 100 characters']
+    maxlength: [100, 'Business name cannot exceed 100 characters']
   },
   email: {
     type: String,
@@ -33,6 +32,11 @@ const userSchema = new mongoose.Schema({
     zip_code: String,
     country: String
   },
+  kyc_status: {
+    type: String,
+    enum: ['pending', 'verified', 'rejected'],
+    default: 'pending'
+  },
   avatar_url: String,
   is_active: {
     type: Boolean,
@@ -48,9 +52,8 @@ const userSchema = new mongoose.Schema({
 });
 
 // Hash password before saving
-userSchema.pre('save', async function(next) {
+sellerSchema.pre('save', async function(next) {
   if (!this.isModified('password')) return next();
-  
   try {
     const salt = await bcrypt.genSalt(12);
     this.password = await bcrypt.hash(this.password, salt);
@@ -61,15 +64,15 @@ userSchema.pre('save', async function(next) {
 });
 
 // Compare password method
-userSchema.methods.comparePassword = async function(candidatePassword) {
+sellerSchema.methods.comparePassword = async function(candidatePassword) {
   return await bcrypt.compare(candidatePassword, this.password);
 };
 
 // Remove password from JSON output
-userSchema.methods.toJSON = function() {
-  const userObject = this.toObject();
-  delete userObject.password;
-  return userObject;
+sellerSchema.methods.toJSON = function() {
+  const sellerObject = this.toObject();
+  delete sellerObject.password;
+  return sellerObject;
 };
 
-module.exports = mongoose.model('UserDatabase', userSchema);
+module.exports = mongoose.model('SellerDatabase', sellerSchema); 
