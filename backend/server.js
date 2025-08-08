@@ -41,12 +41,24 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Database connection
-mongoose.connect('mongodb+srv://dassatyam300300:HelloMac@bidblaze.ykf8sd3.mongodb.net/?retryWrites=true&w=majority&appName=Bidblaze', 
+// // Database connection
+// mongoose.connect('mongodb+srv://dassatyam300300:HelloMac@bidblaze.ykf8sd3.mongodb.net/?retryWrites=true&w=majority&appName=Bidblaze', 
  
-) 
-.then(() => console.log('Connected to MongoDB'))
-.catch(err => console.error('MongoDB connection error:', err)); 
+// ) 
+// .then(() => console.log('Connected to MongoDB'))
+// .catch(err => console.error('MongoDB connection error:', err)); 
+
+
+const atlasUrl=process.env.MONGO_URI
+
+async function main(){
+    await mongoose.connect(atlasUrl);
+}
+main().then(()=>console.log("database connection successful"))
+.catch((err)=>console.log("error occured while connecting to database",err));
+
+
+
 
 // Routes
 app.use('/api/auth', authRoutes);
