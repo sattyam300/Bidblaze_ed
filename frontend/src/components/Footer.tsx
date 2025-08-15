@@ -111,14 +111,15 @@ const Footer = () => {
               <li className="flex items-start">
                 <MapPin className="h-5 w-5 text-primary mr-3 mt-0.5" />
                 <span className="text-gray-600 dark:text-gray-300">
-                  123 Auction Way, Suite 456<br />
-                  San Francisco, CA 94103
+                  Plot No. 15, Connaught Place<br />
+                  New Delhi, Delhi 110001<br />
+                  India
                 </span>
               </li>
               <li className="flex items-center">
                 <Phone className="h-5 w-5 text-primary mr-3" />
                 <span className="text-gray-600 dark:text-gray-300">
-                  +1 (555) 123-4567
+                  +91 11 2345 6789
                 </span>
               </li>
               <li className="flex items-center">
