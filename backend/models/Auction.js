@@ -61,8 +61,22 @@ const auctionSchema = new mongoose.Schema({
     required: true
   },
   images: [{
-    url: String,
-    alt: String
+    url: {
+      type: String,
+      required: true
+    },
+    public_id: {
+      type: String,
+      required: true
+    },
+    alt: {
+      type: String,
+      default: ''
+    },
+    width: Number,
+    height: Number,
+    format: String,
+    size: Number
   }],
   status: {
     type: String,

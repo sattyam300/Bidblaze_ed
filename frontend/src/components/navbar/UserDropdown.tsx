@@ -1,6 +1,6 @@
 
 import { Link, useNavigate } from "react-router-dom";
-import { ChevronDown, User, LogOut } from "lucide-react";
+import { ChevronDown, User, LogOut, Settings, Package, Edit } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -58,12 +58,26 @@ export const UserDropdown = () => {
         <DropdownMenuItem asChild>
           <Link to="/user-profile" className="cursor-pointer">
             <User className="h-4 w-4 mr-2" />
-            Profile
+            View Profile
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
+          <Link to="/profile-edit" className="cursor-pointer">
+            <Edit className="h-4 w-4 mr-2" />
+            Edit Profile
+          </Link>
+        </DropdownMenuItem>
+        {user.role === 'seller' && (
+          <DropdownMenuItem asChild>
+            <Link to="/seller-dashboard" className="cursor-pointer">
+              <Package className="h-4 w-4 mr-2" />
+              Seller Dashboard
+            </Link>
+          </DropdownMenuItem>
+        )}
+        <DropdownMenuItem asChild>
           <Link to="/profile" className="cursor-pointer">
-            <User className="h-4 w-4 mr-2" />
+            <Settings className="h-4 w-4 mr-2" />
             Settings
           </Link>
         </DropdownMenuItem>

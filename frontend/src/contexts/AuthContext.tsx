@@ -39,7 +39,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const checkAuth = async () => {
     try {
       const token = localStorage.getItem('auth-token')
-      const response = await fetch('/api/auth/me', {
+      const response = await fetch('http://localhost:8080/api/auth/me', {
         headers: {
           'Authorization': token ? `Bearer ${token}` : '',
         },
@@ -59,9 +59,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }
 
-  const signUp = async (email: string, password: string, fullName: string, role = 'buyer') => {
+  const signUp = async (email: string, password: string, fullName: string, role = 'user') => {
     try {
-      const response = await fetch('/api/auth/register', {
+      const response = await fetch('http://localhost:8080/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -70,6 +70,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           email,
           password,
           full_name: fullName,
+          business_name: role === 'seller' ? fullName : undefined,
           role
         }),
       })
@@ -91,14 +92,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = async (email: string, password: string, role = 'user') => {
     try {
-      const response = await fetch('/api/auth/login', {
+      const response = await fetch('http://localhost:8080/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email, password, role }),
       })
 
       const data = await response.json()
@@ -121,7 +122,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signOut = async () => {
     try {
       const token = localStorage.getItem('auth-token')
-      await fetch('/api/auth/logout', { 
+      await fetch('http://localhost:8080/api/auth/logout', { 
         method: 'POST',
         headers: {
           'Authorization': token ? `Bearer ${token}` : '',

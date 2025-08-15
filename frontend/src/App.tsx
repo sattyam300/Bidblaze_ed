@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { SocketProvider } from "@/contexts/SocketContext";
 import Index from "./pages/Index";
 import Auctions from "./pages/Auctions";
 import About from "./pages/About";
@@ -18,6 +19,9 @@ import UserProfile from "./pages/UserProfile";
 import MakeBid from "./pages/MakeBid";
 import ExternalAuctions from "./pages/ExternalAuctions";
 import AuthPage from "./pages/AuthPage";
+import SellerDashboard from "./pages/SellerDashboard";
+import ProfileEdit from "./pages/ProfileEdit";
+import WebSocketTest from "./pages/WebSocketTest";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 
 const queryClient = new QueryClient();
@@ -26,10 +30,11 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <ThemeProvider>
       <AuthProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
+        <SocketProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
               
@@ -50,6 +55,15 @@ const App = () => (
               <Route path="/seller-signup" element={<SellerSignUp />} />
               <Route path="/auth" element={<AuthPage />} />
               
+              {/* Seller Routes */}
+              <Route path="/seller-dashboard" element={<SellerDashboard />} />
+              
+              {/* Profile Routes */}
+              <Route path="/profile-edit" element={<ProfileEdit />} />
+              
+              {/* WebSocket Test Route */}
+              <Route path="/websocket-test" element={<WebSocketTest />} />
+              
               {/* Placeholder Routes */}
               <Route path="/notifications" element={<Index />} /> {/* Placeholder for future pages */}
               <Route path="/contact" element={<Index />} /> {/* Placeholder for future pages */}
@@ -59,6 +73,7 @@ const App = () => (
             </Routes>
           </BrowserRouter>
         </TooltipProvider>
+        </SocketProvider>
       </AuthProvider>
     </ThemeProvider>
   </QueryClientProvider>

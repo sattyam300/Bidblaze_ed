@@ -1,6 +1,8 @@
 
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Edit } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -38,7 +40,7 @@ const myOrders = [
     item: "Vintage Rolex Watch", 
     date: "2023-06-15", 
     status: "Delivered", 
-    amount: "$4,250.00",
+    amount: "₹3,50,000",
     image: "https://images.unsplash.com/photo-1547996160-81dfa63595aa?auto=format&fit=crop&q=80&w=300&h=200"
   },
   { 
@@ -46,7 +48,7 @@ const myOrders = [
     item: "Art Deco Painting", 
     date: "2023-05-22", 
     status: "Shipped", 
-    amount: "$1,850.00",
+    amount: "₹1,50,000",
     image: "https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&q=80&w=300&h=200"
   },
   { 
@@ -54,7 +56,7 @@ const myOrders = [
     item: "Antique Desk Lamp", 
     date: "2023-04-10", 
     status: "Delivered", 
-    amount: "$320.00",
+    amount: "₹25,000",
     image: "https://images.unsplash.com/photo-1507473885765-e6ed057f782c?auto=format&fit=crop&q=80&w=300&h=200"
   }
 ];
@@ -65,8 +67,8 @@ const myBids = [
     item: "Rare Comic Book Collection", 
     date: "2023-06-10", 
     status: "Winning", 
-    bidAmount: "$1,250.00",
-    currentBid: "$1,250.00",
+    bidAmount: "₹1,00,000",
+    currentBid: "₹1,00,000",
     endsIn: "2 days",
     image: "https://images.unsplash.com/photo-1544982503-9f984c14501a?auto=format&fit=crop&q=80&w=300&h=200"
   },
@@ -75,8 +77,8 @@ const myBids = [
     item: "Japanese Porcelain Set", 
     date: "2023-06-05", 
     status: "Outbid", 
-    bidAmount: "$450.00",
-    currentBid: "$520.00",
+    bidAmount: "₹35,000",
+    currentBid: "₹40,000",
     endsIn: "6 hours",
     image: "https://images.unsplash.com/photo-1626806787461-102c1a7f1c0b?auto=format&fit=crop&q=80&w=300&h=200"
   },
@@ -85,8 +87,8 @@ const myBids = [
     item: "Handcrafted Leather Bag", 
     date: "2023-05-30", 
     status: "Won", 
-    bidAmount: "$380.00",
-    currentBid: "$380.00",
+    bidAmount: "₹30,000",
+    currentBid: "₹30,000",
     endsIn: "Ended",
     image: "https://images.unsplash.com/photo-1590874103328-eac38a683ce7?auto=format&fit=crop&q=80&w=300&h=200"
   }
@@ -96,28 +98,28 @@ const recommendedAuctions = [
   {
     id: "AUC-9821",
     title: "Mid-Century Modern Chair",
-    currentBid: "$320",
+    currentBid: "₹25,000",
     endsIn: "1 day",
     image: "https://images.unsplash.com/photo-1561677978-583a8c7a4b43?auto=format&fit=crop&q=80&w=300&h=200"
   },
   {
     id: "AUC-8754",
     title: "Vintage Camera Collection",
-    currentBid: "$750",
+    currentBid: "₹60,000",
     endsIn: "3 days",
     image: "https://images.unsplash.com/photo-1452780212940-6f5c0d14d848?auto=format&fit=crop&q=80&w=300&h=200"
   },
   {
     id: "AUC-7653",
     title: "Handmade Pottery Set",
-    currentBid: "$180",
+    currentBid: "₹15,000",
     endsIn: "8 hours",
     image: "https://images.unsplash.com/photo-1565193298357-ada3abf71a43?auto=format&fit=crop&q=80&w=300&h=200"
   },
   {
     id: "AUC-6452",
     title: "Limited Edition Prints",
-    currentBid: "$420",
+    currentBid: "₹35,000",
     endsIn: "2 days",
     image: "https://images.unsplash.com/photo-1579541637431-4e3cd6f6c9e3?auto=format&fit=crop&q=80&w=300&h=200"
   }
@@ -173,6 +175,16 @@ const Profile = () => {
             
             {/* Main Content */}
             <div className="lg:col-span-3">
+              <div className="flex justify-between items-center mb-6">
+                <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">My Profile</h1>
+                <Button
+                  onClick={() => navigate('/profile-edit')}
+                  className="bg-gradient-to-r from-red-600 to-orange-600 hover:from-red-700 hover:to-orange-700"
+                >
+                  <Edit className="h-4 w-4 mr-2" />
+                  Edit Profile
+                </Button>
+              </div>
               <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
                 <TabsList className="grid grid-cols-4 mb-6">
                   <TabsTrigger value="overview">Overview</TabsTrigger>

@@ -67,7 +67,12 @@ const AuthPage = () => {
           toast.error("Sign in failed", { description: error.message || "Please check your credentials and try again." });
         } else {
           toast.success("Welcome back!", { description: "You have successfully signed in." });
-          navigate("/");
+          // Redirect sellers to their dashboard, users to home
+          if (userType === 'seller') {
+            navigate("/seller-dashboard");
+          } else {
+            navigate("/");
+          }
         }
       } else {
         // signup

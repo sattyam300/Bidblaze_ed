@@ -4,6 +4,9 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
+const { createServer } = require('http');
+const { Server } = require('socket.io');
+const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 // Set JWT secret if not in environment
@@ -17,8 +20,10 @@ const userRoutes = require('./routes/users');
 const auctionRoutes = require('./routes/auctions');
 const bidRoutes = require('./routes/bids');
 const paymentRoutes = require('./routes/payments');
+const imageRoutes = require('./routes/images');
 
 const app = express();
+const server = createServer(app);
 
 // Security middleware
 app.use(helmet());
@@ -41,31 +46,125 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// // Database connection
-// mongoose.connect('mongodb+srv://dassatyam300300:HelloMac@bidblaze.ykf8sd3.mongodb.net/?retryWrites=true&w=majority&appName=Bidblaze', 
- 
-// ) 
-// .then(() => console.log('Connected to MongoDB'))
-// .catch(err => console.error('MongoDB connection error:', err)); 
+// Database connection
+const atlasUrl = 'mongodb+srv://dassatyam300:fYg74wKbtERMBcXd@cluster0.jjlawdr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
-
-const atlasUrl=process.env.MONGO_URI
-
-async function main(){
-    await mongoose.connect(atlasUrl);
-}
-main().then(()=>console.log("database connection successful"))
-.catch((err)=>console.log("error occured while connecting to database",err));
+// Connect to MongoDB
+mongoose.connect(atlasUrl)
+  .then(() => {
+    console.log('MongoDB Connected Connected Successfully');
+  })
+  .catch((err) => {
+    console.error(`Error: ${err.message}`);
+    process.exit(1);
+  });
 
 
 
+
+// Socket.IO setup
+const io = new Server(server, {
+  cors: {
+    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    credentials: true
+  }
+});
+
+// Socket.IO authentication middleware
+io.use((socket, next) => {
+  const token = socket.handshake.auth.token;
+  if (!token) {
+    return next(new Error('Authentication error'));
+  }
+  
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    socket.userId = decoded.userId;
+    socket.userRole = decoded.role;
+    next();
+  } catch (error) {
+    return next(new Error('Authentication error'));
+  }
+});
+
+// Socket.IO connection handling
+io.on('connection', (socket) => {
+  console.log(`User ${socket.userId} connected`);
+  
+  // Join auction room
+  socket.on('joinAuction', (auctionId) => {
+    socket.join(`auction_${auctionId}`);
+    console.log(`User ${socket.userId} joined auction ${auctionId}`);
+  });
+  
+  // Leave auction room
+  socket.on('leaveAuction', (auctionId) => {
+    socket.leave(`auction_${auctionId}`);
+    console.log(`User ${socket.userId} left auction ${auctionId}`);
+  });
+  
+  // Handle new bid
+  socket.on('newBid', (data) => {
+    const { auctionId, bidAmount, bidderId, bidderName } = data;
+    io.to(`auction_${auctionId}`).emit('bidUpdate', {
+      auctionId,
+      newBid: bidAmount,
+      bidderId,
+      bidderName,
+      timestamp: new Date().toISOString()
+    });
+    console.log(`New bid of ${bidAmount} for auction ${auctionId}`);
+  });
+  
+  // Handle product updates
+  socket.on('productUpdate', (data) => {
+    const { auctionId, updates } = data;
+    io.to(`auction_${auctionId}`).emit('productUpdate', {
+      auctionId,
+      updates,
+      timestamp: new Date().toISOString()
+    });
+    console.log(`Product update for auction ${auctionId}`);
+  });
+  
+  // Handle image updates
+  socket.on('imageUpdate', (data) => {
+    const { auctionId, images } = data;
+    io.to(`auction_${auctionId}`).emit('imageUpdate', {
+      auctionId,
+      images,
+      timestamp: new Date().toISOString()
+    });
+    console.log(`Image update for auction ${auctionId}`);
+  });
+  
+  // Handle auction end
+  socket.on('auctionEnd', (data) => {
+    const { auctionId, winnerId, finalBid } = data;
+    io.to(`auction_${auctionId}`).emit('auctionEnd', {
+      auctionId,
+      winnerId,
+      finalBid,
+      timestamp: new Date().toISOString()
+    });
+    console.log(`Auction ${auctionId} ended`);
+  });
+  
+  socket.on('disconnect', () => {
+    console.log(`User ${socket.userId} disconnected`);
+  });
+});
+
+// Make io available to routes
+app.set('io', io);
 
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/auctions', auctionRoutes);
 app.use('/api/bids', bidRoutes);
-// app.use('/api/payments', paymentRoutes);
+app.use('/api/images', imageRoutes);
+app.use('/api/payments', paymentRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
@@ -87,6 +186,7 @@ app.use('*', (req, res) => {
 });
 
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
+  console.log(`Socket.IO server ready for real-time updates`);
 });

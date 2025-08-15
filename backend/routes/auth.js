@@ -42,7 +42,8 @@ router.post('/register', [
         email,
         password,
         phone,
-        address
+        address,
+        role: 'seller'
       });
       await user.save();
     } else {
@@ -68,9 +69,13 @@ router.post('/register', [
       token,
       user: {
         id: user._id,
-        name: user.full_name || user.business_name,
+        full_name: user.full_name || user.business_name,
         email: user.email,
-        role
+        role: user.role || role,
+        business_name: user.business_name,
+        phone: user.phone,
+        address: user.address,
+        kyc_status: user.kyc_status
       }
     });
   } catch (error) {
@@ -115,9 +120,13 @@ router.post('/login', [
       token,
       user: {
         id: user._id,
-        name: user.full_name || user.business_name,
+        full_name: user.full_name || user.business_name,
         email: user.email,
-        role
+        role: user.role || role,
+        business_name: user.business_name,
+        phone: user.phone,
+        address: user.address,
+        kyc_status: user.kyc_status
       }
     });
   } catch (error) {
@@ -131,9 +140,10 @@ router.get('/me', auth, async (req, res) => {
     res.json({
       user: {
         id: req.user._id,
-        full_name: req.user.full_name,
+        full_name: req.user.full_name || req.user.business_name,
         email: req.user.email,
         role: req.user.role,
+        business_name: req.user.business_name,
         phone: req.user.phone,
         address: req.user.address,
         kyc_status: req.user.kyc_status,

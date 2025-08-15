@@ -146,6 +146,83 @@ router.get('/my-auctions', [auth, authorize('seller', 'admin')], async (req, res
   }
 });
 
+// Update user by ID (for profile editing)
+router.put('/:userId', [
+  auth,
+  body('full_name').optional().trim().isLength({ min: 2, max: 100 }),
+  body('business_name').optional().trim().isLength({ min: 2, max: 100 }),
+  body('email').optional().isEmail(),
+  body('phone').optional().matches(/^\+?[\d\s-()]+$/),
+  body('address.street').optional().trim().isLength({ max: 200 }),
+  body('address.city').optional().trim().isLength({ max: 100 }),
+  body('address.state').optional().trim().isLength({ max: 100 }),
+  body('address.zip_code').optional().trim().isLength({ max: 20 }),
+  body('address.country').optional().trim().isLength({ max: 100 }),
+  body('avatar_url').optional().isURL()
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    // Check if user is updating their own profile
+    if (req.params.userId !== req.user._id.toString()) {
+      return res.status(403).json({ message: 'Not authorized to update this profile' });
+    }
+
+    const updateData = { ...req.body };
+
+    // Remove undefined values
+    Object.keys(updateData).forEach(key => {
+      if (updateData[key] === undefined || updateData[key] === '') {
+        delete updateData[key];
+      }
+    });
+
+    // Handle address object
+    if (updateData.address) {
+      Object.keys(updateData.address).forEach(key => {
+        if (updateData.address[key] === undefined || updateData.address[key] === '') {
+          delete updateData.address[key];
+        }
+      });
+      if (Object.keys(updateData.address).length === 0) {
+        delete updateData.address;
+      }
+    }
+
+    // Try to update in UserDatabase first
+    let updatedUser = await UserDatabase.findByIdAndUpdate(
+      req.user._id,
+      updateData,
+      { new: true, runValidators: true }
+    );
+
+    // If not found in UserDatabase, try SellerDatabase
+    if (!updatedUser) {
+      const SellerDatabase = require('../models/Seller');
+      updatedUser = await SellerDatabase.findByIdAndUpdate(
+        req.user._id,
+        updateData,
+        { new: true, runValidators: true }
+      );
+    }
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json({
+      message: 'Profile updated successfully',
+      user: updatedUser
+    });
+  } catch (error) {
+    console.error('Profile update error:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
+
 // Deactivate account
 router.put('/deactivate', auth, async (req, res) => {
   try {

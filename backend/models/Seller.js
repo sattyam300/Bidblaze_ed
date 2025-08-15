@@ -46,6 +46,11 @@ const sellerSchema = new mongoose.Schema({
   email_verified: {
     type: Boolean,
     default: false
+  },
+  role: {
+    type: String,
+    default: 'seller',
+    enum: ['seller', 'admin']
   }
 }, {
   timestamps: true

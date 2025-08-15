@@ -12,22 +12,35 @@ const auth = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    
+    // Try to find user in UserDatabase first
     let user = await UserDatabase.findById(decoded.userId).select('-password');
+    let userType = 'user';
+    
+    // If not found in UserDatabase, try SellerDatabase
     if (!user) {
       user = await SellerDatabase.findById(decoded.userId).select('-password');
+      userType = 'seller';
     }
     
     if (!user) {
       return res.status(401).json({ message: 'Invalid token.' });
     }
 
-    if (!user.is_active) {
+    // Ensure user has is_active field
+    if (user.is_active === false) {
       return res.status(401).json({ message: 'Account is deactivated.' });
+    }
+
+    // Add role if not present (for backward compatibility)
+    if (!user.role) {
+      user.role = userType;
     }
 
     req.user = user;
     next();
   } catch (error) {
+    console.error('Auth middleware error:', error);
     res.status(401).json({ message: 'Invalid token.' });
   }
 };

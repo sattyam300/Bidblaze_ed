@@ -9,7 +9,7 @@ const SAMPLE_AUCTIONS = [
   {
     id: "1",
     title: "Vintage Rolex Submariner 1680",
-    currentBid: 12500,
+    currentBid: 1000000,
     bids: 18,
     timeRemaining: "2h 15m",
     imageUrl: "https://images.unsplash.com/photo-1547996160-81dfa63595aa?auto=format&fit=crop&q=80&w=600&h=400",
@@ -19,7 +19,7 @@ const SAMPLE_AUCTIONS = [
   {
     id: "2",
     title: "Rare First Edition Book Collection",
-    currentBid: 4800,
+    currentBid: 400000,
     bids: 9,
     timeRemaining: "4h 30m",
     imageUrl: "https://images.unsplash.com/photo-1550399105-c4db5fb85c18?auto=format&fit=crop&q=80&w=600&h=400",
@@ -30,7 +30,7 @@ const SAMPLE_AUCTIONS = [
   {
     id: "3",
     title: "Original Oil Painting by Emma Roberts",
-    currentBid: 7300,
+    currentBid: 600000,
     bids: 12,
     timeRemaining: "1d 8h",
     imageUrl: "https://images.unsplash.com/photo-1579783928621-7a13d66a62b1?auto=format&fit=crop&q=80&w=600&h=400",
@@ -40,7 +40,7 @@ const SAMPLE_AUCTIONS = [
   {
     id: "4",
     title: "Antique Mahogany Writing Desk",
-    currentBid: 3200,
+    currentBid: 250000,
     bids: 7,
     timeRemaining: "6h 45m",
     imageUrl: "https://images.unsplash.com/photo-1540809799-7d3a5e0115c4?auto=format&fit=crop&q=80&w=600&h=400",
@@ -50,7 +50,7 @@ const SAMPLE_AUCTIONS = [
   {
     id: "5",
     title: "Signed NBA Basketball Memorabilia",
-    currentBid: 960,
+    currentBid: 75000,
     bids: 14,
     timeRemaining: "3h 10m",
     imageUrl: "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&q=80&w=600&h=400",
@@ -61,7 +61,7 @@ const SAMPLE_AUCTIONS = [
   {
     id: "6",
     title: "1967 Ford Mustang GT Fastback",
-    currentBid: 75000,
+    currentBid: 5500000,
     bids: 23,
     timeRemaining: "2d 10h",
     imageUrl: "https://images.unsplash.com/photo-1567808291548-fc3ee04dbcf0?auto=format&fit=crop&q=80&w=600&h=400",
@@ -71,7 +71,7 @@ const SAMPLE_AUCTIONS = [
   {
     id: "7",
     title: "2021 Lamborghini Aventador SVJ",
-    currentBid: 450000,
+    currentBid: 35000000,
     bids: 32,
     timeRemaining: "1d 5h",
     imageUrl: "https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&q=80&w=600&h=400",
@@ -81,7 +81,7 @@ const SAMPLE_AUCTIONS = [
   {
     id: "8",
     title: "1957 Chevrolet Bel Air",
-    currentBid: 68000,
+    currentBid: 5000000,
     bids: 19,
     timeRemaining: "3d 2h",
     imageUrl: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=600&h=400",
@@ -91,7 +91,7 @@ const SAMPLE_AUCTIONS = [
   {
     id: "9",
     title: "Modern Abstract Canvas by J. Thompson",
-    currentBid: 5400,
+    currentBid: 450000,
     bids: 8,
     timeRemaining: "12h 20m",
     imageUrl: "https://images.unsplash.com/photo-1501084817091-a4f3d1d19e07?auto=format&fit=crop&q=80&w=600&h=400",
@@ -102,7 +102,7 @@ const SAMPLE_AUCTIONS = [
   {
     id: "10",
     title: "19th Century Landscape Painting",
-    currentBid: 9200,
+    currentBid: 750000,
     bids: 15,
     timeRemaining: "1d 18h",
     imageUrl: "https://images.unsplash.com/photo-1579762715118-a6f1d4b934f1?auto=format&fit=crop&q=80&w=600&h=400",
@@ -112,7 +112,7 @@ const SAMPLE_AUCTIONS = [
   {
     id: "11",
     title: "Mediterranean Villa with Ocean View",
-    currentBid: 1850000,
+    currentBid: 150000000,
     bids: 7,
     timeRemaining: "5d 8h",
     imageUrl: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=600&h=400",
@@ -122,7 +122,7 @@ const SAMPLE_AUCTIONS = [
   {
     id: "12",
     title: "Victorian Manor in Historic District",
-    currentBid: 950000,
+    currentBid: 75000000,
     bids: 5,
     timeRemaining: "6d 12h",
     imageUrl: "https://images.unsplash.com/photo-1600607688969-a48377e0d24e?auto=format&fit=crop&q=80&w=600&h=400",

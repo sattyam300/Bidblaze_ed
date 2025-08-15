@@ -2,7 +2,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Clock, Heart, ExternalLink, Activity, Users, DollarSign } from "lucide-react";
+import { Clock, Heart, ExternalLink, Activity, Users } from "lucide-react";
+import { getRupeeSymbol } from "@/lib/currency";
+import { formatRupees } from "@/lib/currency";
 
 interface AuctionCardProps {
   id: string;
@@ -76,7 +78,7 @@ const AuctionCard = ({
         <div className="flex items-center justify-between mb-4">
           <div>
             <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Current Bid</p>
-            <p className="text-lg font-bold text-gradient">${currentBid.toLocaleString()}</p>
+            <p className="text-lg font-bold text-gradient">{formatRupees(currentBid)}</p>
           </div>
           
           <div className="flex items-center space-x-3">
@@ -112,7 +114,7 @@ const AuctionCard = ({
                 className="w-1/2 rounded-lg backdrop-blur-sm bg-white/10 dark:bg-gray-800/10 border-gray-200/50 dark:border-gray-700/50 hover:bg-primary/10 hover:text-primary"
               >
                 <Link to={`/bid/${id}`} className="flex items-center w-full justify-center">
-                  <DollarSign className="h-4 w-4 mr-1" />
+                  <span className="h-4 w-4 mr-1 text-lg font-bold">{getRupeeSymbol()}</span>
                   Bid Now
                 </Link>
               </Button>

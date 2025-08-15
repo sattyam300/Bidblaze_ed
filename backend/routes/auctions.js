@@ -4,6 +4,7 @@ const { body, validationResult, query } = require('express-validator');
 const Auction = require('../models/Auction');
 const Bid = require('../models/Bid');
 const { auth, authorize } = require('../middleware/auth');
+const { cleanupAuctionImages } = require('../lib/imageCleanup');
 
 const router = express.Router();
 
@@ -121,11 +122,22 @@ router.post('/', [
   body('title').trim().isLength({ min: 5, max: 200 }),
   body('description').trim().isLength({ min: 10, max: 2000 }),
   body('category').isIn(['watches', 'art', 'jewelry', 'cars', 'books', 'electronics', 'collectibles', 'other']),
-  body('starting_price').isFloat({ min: 0 }),
+  body('starting_price').isFloat({ min: 0 }).custom((value) => {
+    if (value < 100) {
+      throw new Error('Starting price must be at least ₹100');
+    }
+    return true;
+  }),
   body('bid_increment').isFloat({ min: 1 }),
   body('start_time').isISO8601(),
   body('end_time').isISO8601(),
-  body('condition').isIn(['new', 'like_new', 'good', 'fair', 'poor'])
+  body('condition').isIn(['new', 'like_new', 'good', 'fair', 'poor']),
+  body('images').optional().isArray().custom((value) => {
+    if (value && value.length > 10) {
+      throw new Error('Maximum 10 images allowed per auction');
+    }
+    return true;
+  })
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -139,6 +151,15 @@ router.post('/', [
       start_time: new Date(req.body.start_time),
       end_time: new Date(req.body.end_time)
     };
+
+    // Validate images structure if provided
+    if (auctionData.images && Array.isArray(auctionData.images)) {
+      auctionData.images.forEach((img, index) => {
+        if (!img.url || !img.public_id) {
+          throw new Error(`Image ${index + 1} is missing required fields (url or public_id)`);
+        }
+      });
+    }
 
     const auction = new Auction(auctionData);
     await auction.save();
@@ -158,8 +179,19 @@ router.put('/:id', [
   authorize('seller', 'admin'),
   body('title').optional().trim().isLength({ min: 5, max: 200 }),
   body('description').optional().trim().isLength({ min: 10, max: 2000 }),
-  body('starting_price').optional().isFloat({ min: 0 }),
-  body('reserve_price').optional().isFloat({ min: 0 })
+  body('starting_price').optional().isFloat({ min: 0 }).custom((value) => {
+    if (value && value < 100) {
+      throw new Error('Starting price must be at least ₹100');
+    }
+    return true;
+  }),
+  body('reserve_price').optional().isFloat({ min: 0 }),
+  body('images').optional().isArray().custom((value) => {
+    if (value && value.length > 10) {
+      throw new Error('Maximum 10 images allowed per auction');
+    }
+    return true;
+  })
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -183,9 +215,28 @@ router.put('/:id', [
       return res.status(400).json({ message: 'Cannot update auction that has started or ended' });
     }
 
+    // Validate images structure if provided
+    if (req.body.images && Array.isArray(req.body.images)) {
+      req.body.images.forEach((img, index) => {
+        if (!img.url || !img.public_id) {
+          throw new Error(`Image ${index + 1} is missing required fields (url or public_id)`);
+        }
+      });
+    }
+
     // Update auction
     Object.assign(auction, req.body);
     await auction.save();
+
+    // Emit Socket.IO event for product updates
+    const io = req.app.get('io');
+    if (io) {
+      io.to(`auction_${auction._id}`).emit('productUpdate', {
+        auctionId: auction._id,
+        updates: auction,
+        timestamp: new Date().toISOString()
+      });
+    }
 
     res.json({
       message: 'Auction updated successfully',
@@ -215,6 +266,9 @@ router.delete('/:id', [auth, authorize('seller', 'admin')], async (req, res) => 
     if (bidCount > 0) {
       return res.status(400).json({ message: 'Cannot delete auction with existing bids' });
     }
+
+    // Clean up images from Cloudinary before deleting auction
+    await cleanupAuctionImages(auction);
 
     await Auction.findByIdAndDelete(req.params.id);
 

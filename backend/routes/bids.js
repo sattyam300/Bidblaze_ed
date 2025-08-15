@@ -83,6 +83,19 @@ router.post('/', [
     // Populate bid for response
     await bid.populate('bidder_id', 'full_name');
 
+    // Emit Socket.IO event for real-time updates
+    const io = req.app.get('io');
+    if (io) {
+      io.to(`auction_${auction_id}`).emit('bidUpdate', {
+        auctionId: auction_id,
+        newBid: amount,
+        bidderId: req.user._id,
+        bidderName: req.user.full_name || req.user.business_name,
+        timestamp: new Date().toISOString(),
+        totalBids: auction.total_bids
+      });
+    }
+
     res.status(201).json({
       message: 'Bid placed successfully',
       bid,
