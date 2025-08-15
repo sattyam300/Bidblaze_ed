@@ -47,15 +47,15 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Database connection
-const atlasUrl = 'mongodb+srv://dassatyam300:fYg74wKbtERMBcXd@cluster0.jjlawdr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+const mongoUrl = process.env.MONGODB_URI || 'mongodb+srv://dassatyam300:fYg74wKbtERMBcXd@cluster0.jjlawdr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
 // Connect to MongoDB
-mongoose.connect(atlasUrl)
+mongoose.connect(mongoUrl)
   .then(() => {
-    console.log('MongoDB Connected Connected Successfully');
+    console.log('✅ MongoDB Connected Successfully');
   })
   .catch((err) => {
-    console.error(`Error: ${err.message}`);
+    console.error(`❌ MongoDB Connection Error: ${err.message}`);
     process.exit(1);
   });
 

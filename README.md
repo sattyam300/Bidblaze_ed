@@ -2,37 +2,6 @@
 
 BidBlaze 2.0 is a real-time auction platform built with React, Node.js, and MongoDB. Featuring Socket.io live bidding, Razorpay secure payments, and Cloudinary image management, it delivers a fast, secure, and engaging experience for buyers, sellers, and auction houses worldwide.
 
-## 🚀 Key Features
-
-**Real-Time Bidding System**
-- WebSocket-powered live bidding with instant updates
-- Real-time auction status and bid notifications
-- Live auction countdown timers and progress indicators
-
-**Secure Payment Integration**
-- Razorpay payment gateway integration for Indian market
-- Secure transaction processing with signature verification
-- Multiple payment methods: UPI, cards, net banking, wallets
-- Complete payment success/failure handling with user feedback
-
-**Advanced Auction Management**
-- Multi-category auction listings (Watches, Art, Cars, Books, etc.)
-- Image upload and management with Cloudinary integration
-- Detailed auction specifications and seller information
-- Expert verification badges and authenticity guarantees
-
-**User Experience**
-- Modern, responsive UI built with Tailwind CSS and Shadcn/ui
-- Dark/light theme support with smooth transitions
-- Mobile-optimized design for seamless bidding on any device
-- Intuitive navigation and user-friendly auction discovery
-
-**Authentication & Security**
-- JWT-based authentication with role-based access control
-- Secure user registration and login system
-- KYC verification system for enhanced security
-- Protected routes and middleware for data security
-
 ## 🛠️ Technology Stack
 
 ### Frontend Technologies
@@ -122,7 +91,10 @@ MONGODB_URI=mongodb://localhost:27017/bidblaze
 # JWT Configuration
 JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
 
-# Razorpay Configuration (Get from Razorpay Dashboard)
+# Frontend URL (for CORS)
+FRONTEND_URL=http://localhost:3000
+
+# Razorpay Configuration (Optional - can be added later)
 RAZORPAY_KEY_ID=rzp_test_your_test_key_id
 RAZORPAY_KEY_SECRET=your_test_secret_key
 RAZORPAY_WEBHOOK_SECRET=your_webhook_secret
@@ -225,10 +197,45 @@ npm run lint        # Run ESLint
 ### Payments
 - `POST /api/payments/create-order` - Create payment order
 - `POST /api/payments/verify` - Verify payment
-- `GET /api/payments/transactions` - Get user transactions
 - `POST /api/payments/webhook` - Razorpay webhook
 
+## 🚀 Deployment
+
+### Vercel Deployment (Recommended)
+
+For the easiest deployment experience, we recommend using Vercel. Check out our comprehensive deployment guide:
+
+📖 **[Vercel Deployment Guide](./VERCEL_DEPLOYMENT.md)**
+
+### Quick Deployment Steps:
+
+1. **Deploy Backend to Vercel:**
+   ```bash
+   cd backend
+   vercel
+   ```
+
+2. **Deploy Frontend to Vercel:**
+   ```bash
+   cd frontend
+   vercel
+   ```
+
+3. **Set Environment Variables** in Vercel Dashboard
+
+4. **Connect to MongoDB Atlas** for cloud database
+
+### Alternative Deployment Options
+
+- **Heroku** - Platform as a Service
+- **Railway** - Modern deployment platform
+- **DigitalOcean App Platform** - Managed containers
+- **AWS** - Cloud infrastructure
+
 ### Images
+- `POST /api/images/upload` - Upload auction images
+- `DELETE /api/images/:id` - Delete image
+- `GET /api/images/auction/:auctionId` - Get auction images
 - `POST /api/images/upload` - Upload single image
 - `POST /api/images/upload-multiple` - Upload multiple images
 - `DELETE /api/images/:publicId` - Delete image
