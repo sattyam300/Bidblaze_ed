@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { CheckCircle, XCircle, Loader2, CreditCard, Shield } from 'lucide-react';
+import { CheckCircle, XCircle, Loader2, CreditCard, Shield, AlertCircle } from 'lucide-react';
 import { formatRupees } from '@/lib/currency';
 
 interface PaymentModalProps {
@@ -30,10 +30,18 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
   onSuccess
 }) => {
   const [isProcessing, setIsProcessing] = useState(false);
-  const [paymentStatus, setPaymentStatus] = useState<'pending' | 'success' | 'failed'>('pending');
+  const [paymentStatus, setPaymentStatus] = useState<'pending' | 'success' | 'failed' | 'disabled'>('pending');
+  const [isPaymentEnabled, setIsPaymentEnabled] = useState(true);
 
   const handlePayment = async () => {
     if (!isOpen) return;
+
+    // Check if Razorpay is enabled
+    if (!import.meta.env.VITE_RAZORPAY_KEY_ID) {
+      setPaymentStatus('disabled');
+      toast.error('Payment gateway is not configured. Please contact support.');
+      return;
+    }
 
     setIsProcessing(true);
     setPaymentStatus('pending');
@@ -41,7 +49,9 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
     try {
       // Create order on backend
       const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:8080/api/payments/create-order', {
+      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+      
+      const response = await fetch(`${apiUrl}/api/payments/create-order`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -55,7 +65,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
       });
 
       if (!response.ok) {
-        throw new Error('Failed to create payment order');
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to create payment order');
       }
 
       const orderData = await response.json();
@@ -71,7 +82,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
         handler: async function (response: any) {
           try {
             // Verify payment on backend
-            const verifyResponse = await fetch('http://localhost:8080/api/payments/verify', {
+            const verifyResponse = await fetch(`${apiUrl}/api/payments/verify`, {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -151,6 +162,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
       script.onload = () => resolve(window.Razorpay);
       script.onerror = () => {
         toast.error('Failed to load payment gateway');
+        setIsPaymentEnabled(false);
         resolve(null);
       };
       document.body.appendChild(script);
@@ -159,7 +171,13 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
 
   React.useEffect(() => {
     if (isOpen) {
-      loadRazorpayScript();
+      // Check if Razorpay is enabled
+      if (!import.meta.env.VITE_RAZORPAY_KEY_ID) {
+        setIsPaymentEnabled(false);
+        setPaymentStatus('disabled');
+      } else {
+        loadRazorpayScript();
+      }
     }
   }, [isOpen]);
 
@@ -179,6 +197,35 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
         </CardHeader>
         
         <CardContent className="space-y-6">
+          {/* Payment Disabled Status */}
+          {paymentStatus === 'disabled' && (
+            <div className="text-center space-y-4">
+              <div className="flex justify-center">
+                <AlertCircle className="h-16 w-16 text-yellow-500" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-yellow-600 mb-2">Payment Gateway Unavailable</h3>
+                <p className="text-gray-600 mb-4">
+                  Payment processing is currently not available. This feature will be enabled once the platform is fully deployed.
+                </p>
+                <div className="bg-blue-50 p-4 rounded-lg">
+                  <p className="text-sm text-blue-800">
+                    <strong>Demo Mode:</strong> Your bid has been recorded successfully. In a production environment, you would complete the payment here.
+                  </p>
+                </div>
+              </div>
+              <Button 
+                onClick={() => {
+                  if (onSuccess) onSuccess();
+                  onClose();
+                }} 
+                className="w-full"
+              >
+                Continue (Demo Mode)
+              </Button>
+            </div>
+          )}
+
           {/* Payment Status */}
           {paymentStatus === 'success' && (
             <div className="text-center space-y-4">
@@ -208,7 +255,7 @@ const PaymentModal: React.FC<PaymentModalProps> = ({
             </div>
           )}
 
-          {paymentStatus === 'pending' && (
+          {paymentStatus === 'pending' && isPaymentEnabled && (
             <>
               {/* Auction Details */}
               <div className="space-y-3">
