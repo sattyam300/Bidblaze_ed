@@ -185,13 +185,6 @@ POST /api/payments/verify        # Verify payment
 ```bash
 POST /api/images/upload  # Upload an image
 ```
-- **CORS**: Cross-origin resource sharing
-
-### Frontend
-- **React**: UI library
-- **Vite**: Build tool and dev server
-- **Axios**: HTTP client for API requests
-- **CSS3**: Modern styling with Grid and Flexbox
 
 ## Development
 
@@ -199,47 +192,13 @@ POST /api/images/upload  # Upload an image
 
 1. Start the backend (in one terminal):
    ```bash
-   cd server && npm start
+   cd backend && npm run dev
    ```
 
 2. Start the frontend (in another terminal):
    ```bash
-   cd client && npm run dev
+   cd frontend && npm run dev
    ```
-
-### Development Mode
-
-For backend development with auto-restart:
-```bash
-<<<<<<< HEAD
-cd server && npm run dev
-=======
-# MongoDB Configuration
-MONGODB_URI=mongodb://localhost:27017/bidblaze
-
-# JWT Configuration
-JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
-
-# Frontend URL (for CORS)
-FRONTEND_URL=http://localhost:3000
-
-# Razorpay Configuration (Optional - can be added later)
-RAZORPAY_KEY_ID=rzp_test_your_test_key_id
-RAZORPAY_KEY_SECRET=your_test_secret_key
-RAZORPAY_WEBHOOK_SECRET=your_webhook_secret
-
-# Cloudinary Configuration (Get from Cloudinary Dashboard)
-CLOUDINARY_CLOUD_NAME=your_cloud_name
-CLOUDINARY_API_KEY=your_api_key
-CLOUDINARY_API_SECRET=your_api_secret
-
-# Server Configuration
-PORT=8080
-NODE_ENV=development
-FRONTEND_URL=http://localhost:3000
->>>>>>> 7565be956b51b25f3088f0f5d9ab8e6d127d76cd
-```
-(Note: Install nodemon globally if not already installed: `npm install -g nodemon`)
 
 ## Error Handling
 
@@ -259,43 +218,7 @@ The application includes comprehensive error handling:
 
 ## License
 
-<<<<<<< HEAD
 This project is open source and available under the MIT License.
-=======
-**Frontend Scripts:**
-```bash
-npm run dev         # Start development server
-npm run build       # Build for production
-npm run preview     # Preview production build
-npm run lint        # Run ESLint
-```
-
-## 🔌 Integrations & APIs
-
-### Razorpay Payment Gateway
-- **Secure Payment Processing** - Industry-standard encryption
-- **Multiple Payment Methods** - UPI, Cards, Net Banking, Wallets
-- **Webhook Support** - Real-time payment status updates
-- **Signature Verification** - HMAC SHA256 for security
-- **Test Mode** - Safe testing with test credentials
-
-### Socket.io Real-Time Communication
-- **Live Bidding** - Real-time bid updates across all users
-- **Auction Status** - Instant notification of auction changes
-- **User Presence** - Track active bidders in real-time
-- **Bidirectional Communication** - Server-client real-time updates
-
-### Cloudinary Image Management
-- **Automatic Image Optimization** - Resize and compress images
-- **Multiple Image Support** - Gallery for auction items
-- **Secure Upload** - Protected file upload system
-- **CDN Delivery** - Fast global image delivery
-
-### MongoDB Database
-- **Flexible Schema** - NoSQL for auction data
-- **Scalable Architecture** - Handle large auction volumes
-- **Real-time Queries** - Fast data retrieval
-- **Data Integrity** - ACID compliance for transactions
 
 ## 📡 API Endpoints
 
@@ -322,6 +245,14 @@ npm run lint        # Run ESLint
 - `POST /api/payments/create-order` - Create payment order
 - `POST /api/payments/verify` - Verify payment
 - `POST /api/payments/webhook` - Razorpay webhook
+
+### Images
+- `POST /api/images/upload` - Upload auction images
+- `DELETE /api/images/:id` - Delete image
+- `GET /api/images/auction/:auctionId` - Get auction images
+- `POST /api/images/upload` - Upload single image
+- `POST /api/images/upload-multiple` - Upload multiple images
+- `DELETE /api/images/:publicId` - Delete image
 
 ## 🚀 Deployment
 
@@ -356,17 +287,8 @@ For the easiest deployment experience, we recommend using Vercel. Check out our 
 - **DigitalOcean App Platform** - Managed containers
 - **AWS** - Cloud infrastructure
 
-### Images
-- `POST /api/images/upload` - Upload auction images
-- `DELETE /api/images/:id` - Delete image
-- `GET /api/images/auction/:auctionId` - Get auction images
-- `POST /api/images/upload` - Upload single image
-- `POST /api/images/upload-multiple` - Upload multiple images
-- `DELETE /api/images/:publicId` - Delete image
-
 ## 🌟 Why BidBlaze 2.0?
 
 BidBlaze 2.0 revolutionizes the auction experience by combining traditional auction excitement with modern technology. The platform ensures secure, transparent, and engaging bidding experiences while providing comprehensive tools for auction management. Whether you're a seasoned collector or new to auctions, BidBlaze 2.0 offers an intuitive and secure platform for buying and selling valuable items.
 
 Experience the future of auctions with BidBlaze 2.0 - where every bid counts and every transaction is secure! 🎉
->>>>>>> 7565be956b51b25f3088f0f5d9ab8e6d127d76cd
