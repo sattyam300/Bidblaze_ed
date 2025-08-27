@@ -38,75 +38,111 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const checkAuth = async () => {
     try {
-      const response = await fetch('/api/auth/me')
+      console.log('Checking authentication status...');
+      const response = await fetch('http://localhost:8080/api/auth/me', {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        credentials: 'include' // Include cookies for authentication
+      });
+      
       if (response.ok) {
-        const userData = await response.json()
-        setUser(userData.user)
+        const userData = await response.json();
+        console.log('User authenticated:', userData);
+        setUser(userData.user);
+      } else {
+        console.log('User not authenticated, status:', response.status);
+        // 401 is expected for unauthenticated users, so we don't need to log it as an error
+        if (response.status !== 401) {
+          console.error('Authentication check failed with status:', response.status);
+        }
       }
     } catch (error) {
-      console.error('Auth check failed:', error)
+      console.error('Auth check failed:', error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
   const signUp = async (email: string, password: string, fullName: string, role = 'buyer') => {
     try {
-      const response = await fetch('/api/auth/register', {
+      console.log('Signing up user:', { email, fullName, role });
+      const response = await fetch('http://localhost:8080/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
+        credentials: 'include', // Include cookies for authentication
         body: JSON.stringify({
           email,
           password,
           full_name: fullName,
           role
         }),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok) {
-        setUser(data.user)
-        return { error: null }
+        console.log('Sign up successful:', data);
+        setUser(data.user);
+        return { error: null };
       } else {
-        return { error: { message: data.message } }
+        console.error('Sign up failed:', data);
+        return { error: { message: data.message } };
       }
     } catch (error) {
-      return { error: { message: 'Network error occurred' } }
+      console.error('Sign up network error:', error);
+      return { error: { message: 'Network error occurred' } };
     }
   }
 
   const signIn = async (email: string, password: string) => {
     try {
-      const response = await fetch('/api/auth/login', {
+      console.log('Signing in user:', { email });
+      const response = await fetch('http://localhost:8080/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json'
         },
+        credentials: 'include', // Include cookies for authentication
         body: JSON.stringify({ email, password }),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok) {
-        setUser(data.user)
-        return { error: null }
+        console.log('Sign in successful:', data);
+        setUser(data.user);
+        return { error: null };
       } else {
-        return { error: { message: data.message } }
+        console.error('Sign in failed:', data);
+        return { error: { message: data.message } };
       }
     } catch (error) {
-      return { error: { message: 'Network error occurred' } }
+      console.error('Sign in network error:', error);
+      return { error: { message: 'Network error occurred' } };
     }
   }
 
   const signOut = async () => {
     try {
-      await fetch('/api/auth/logout', { method: 'POST' })
-      setUser(null)
+      console.log('Signing out user');
+      await fetch('http://localhost:8080/api/auth/logout', { 
+        method: 'POST',
+        credentials: 'include', // Include cookies for authentication
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      });
+      setUser(null);
+      console.log('Sign out successful');
     } catch (error) {
-      console.error('Logout error:', error)
+      console.error('Logout error:', error);
     }
   }
 

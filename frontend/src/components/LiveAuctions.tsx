@@ -1,146 +1,118 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import AuctionCard from "./AuctionCard";
 import { ArrowRight, ChevronLeft, ChevronRight, Filter, ListFilter, SlidersHorizontal } from "lucide-react";
+import axios from "axios";
+import { toast } from "sonner";
 
-// Sample auction data
-const SAMPLE_AUCTIONS = [
-  {
-    id: "1",
-    title: "Vintage Rolex Submariner 1680",
-    currentBid: 1000000,
-    bids: 18,
-    timeRemaining: "2h 15m",
-    imageUrl: "https://images.unsplash.com/photo-1547996160-81dfa63595aa?auto=format&fit=crop&q=80&w=600&h=400",
-    category: "Watches",
-    isExternal: false
-  },
-  {
-    id: "2",
-    title: "Rare First Edition Book Collection",
-    currentBid: 400000,
-    bids: 9,
-    timeRemaining: "4h 30m",
-    imageUrl: "https://images.unsplash.com/photo-1550399105-c4db5fb85c18?auto=format&fit=crop&q=80&w=600&h=400",
-    category: "Books",
-    isExternal: true,
-    externalUrl: "#"
-  },
-  {
-    id: "3",
-    title: "Original Oil Painting by Emma Roberts",
-    currentBid: 600000,
-    bids: 12,
-    timeRemaining: "1d 8h",
-    imageUrl: "https://images.unsplash.com/photo-1579783928621-7a13d66a62b1?auto=format&fit=crop&q=80&w=600&h=400",
-    category: "Art",
-    isExternal: false
-  },
-  {
-    id: "4",
-    title: "Antique Mahogany Writing Desk",
-    currentBid: 250000,
-    bids: 7,
-    timeRemaining: "6h 45m",
-    imageUrl: "https://images.unsplash.com/photo-1540809799-7d3a5e0115c4?auto=format&fit=crop&q=80&w=600&h=400",
-    category: "Furniture",
-    isExternal: false
-  },
-  {
-    id: "5",
-    title: "Signed NBA Basketball Memorabilia",
-    currentBid: 75000,
-    bids: 14,
-    timeRemaining: "3h 10m",
-    imageUrl: "https://images.unsplash.com/photo-1546519638-68e109498ffc?auto=format&fit=crop&q=80&w=600&h=400",
-    category: "Sports",
-    isExternal: true,
-    externalUrl: "#"
-  },
-  {
-    id: "6",
-    title: "1967 Ford Mustang GT Fastback",
-    currentBid: 5500000,
-    bids: 23,
-    timeRemaining: "2d 10h",
-    imageUrl: "https://images.unsplash.com/photo-1567808291548-fc3ee04dbcf0?auto=format&fit=crop&q=80&w=600&h=400",
-    category: "Cars",
-    isExternal: false
-  },
-  {
-    id: "7",
-    title: "2021 Lamborghini Aventador SVJ",
-    currentBid: 35000000,
-    bids: 32,
-    timeRemaining: "1d 5h",
-    imageUrl: "https://images.unsplash.com/photo-1525609004556-c46c7d6cf023?auto=format&fit=crop&q=80&w=600&h=400",
-    category: "Luxury Cars",
-    isExternal: false
-  },
-  {
-    id: "8",
-    title: "1957 Chevrolet Bel Air",
-    currentBid: 5000000,
-    bids: 19,
-    timeRemaining: "3d 2h",
-    imageUrl: "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?auto=format&fit=crop&q=80&w=600&h=400",
-    category: "Classic Cars",
-    isExternal: false
-  },
-  {
-    id: "9",
-    title: "Modern Abstract Canvas by J. Thompson",
-    currentBid: 450000,
-    bids: 8,
-    timeRemaining: "12h 20m",
-    imageUrl: "https://images.unsplash.com/photo-1501084817091-a4f3d1d19e07?auto=format&fit=crop&q=80&w=600&h=400",
-    category: "Modern Art",
-    isExternal: true,
-    externalUrl: "#"
-  },
-  {
-    id: "10",
-    title: "19th Century Landscape Painting",
-    currentBid: 750000,
-    bids: 15,
-    timeRemaining: "1d 18h",
-    imageUrl: "https://images.unsplash.com/photo-1579762715118-a6f1d4b934f1?auto=format&fit=crop&q=80&w=600&h=400",
-    category: "Paintings",
-    isExternal: false
-  },
-  {
-    id: "11",
-    title: "Mediterranean Villa with Ocean View",
-    currentBid: 150000000,
-    bids: 7,
-    timeRemaining: "5d 8h",
-    imageUrl: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&q=80&w=600&h=400",
-    category: "Luxury Homes",
-    isExternal: false
-  },
-  {
-    id: "12",
-    title: "Victorian Manor in Historic District",
-    currentBid: 75000000,
-    bids: 5,
-    timeRemaining: "6d 12h",
-    imageUrl: "https://images.unsplash.com/photo-1600607688969-a48377e0d24e?auto=format&fit=crop&q=80&w=600&h=400",
-    category: "Historic Properties",
-    isExternal: true,
-    externalUrl: "#"
-  }
-];
+// Categories - Aligned with backend enum values
+const CATEGORIES = ["All", "watches", "art", "jewelry", "cars", "books", "electronics", "collectibles", "other"];
 
-// Categories
-const CATEGORIES = ["All", "Watches", "Art", "Furniture", "Electronics", "Books", "Cars", "Sports", "Luxury Cars", "Classic Cars", "Paintings", "Modern Art", "Luxury Homes", "Historic Properties"];
+// Display names for categories (for UI)
+const CATEGORY_DISPLAY_NAMES = {
+  "watches": "Watches",
+  "art": "Art",
+  "jewelry": "Jewelry",
+  "cars": "Cars",
+  "books": "Books",
+  "electronics": "Electronics",
+  "collectibles": "Collectibles",
+  "other": "Other"
+};
 
 const LiveAuctions = () => {
   const [activeCategory, setActiveCategory] = useState("All");
+  const [auctions, setAuctions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const fetchAuctions = async () => {
+      try {
+        setLoading(true);
+        // Make sure the API endpoint matches the backend server port (8080)
+        console.log('Fetching auctions from API...');
+        const response = await axios.get('http://localhost:8080/api/auctions', {
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          },
+          // Add withCredentials if your API requires authentication
+          // withCredentials: true
+        });
+        
+        console.log('Auction API response:', response.data); // Add logging to debug
+        
+        if (response.data && response.data.auctions) {
+          // Transform backend data to match the format expected by AuctionCard
+          const transformedAuctions = response.data.auctions.map(auction => ({
+            id: auction._id, // Use MongoDB ObjectID
+            title: auction.title,
+            currentBid: auction.current_price,
+            bids: auction.total_bids || 0,
+            timeRemaining: calculateTimeRemaining(auction.end_time),
+            imageUrl: auction.images?.[0]?.url || "https://images.unsplash.com/photo-1547996160-81dfa63595aa?auto=format&fit=crop&q=80&w=600&h=400",
+            category: auction.category,
+            isExternal: false
+          }));
+          console.log('Transformed auctions:', transformedAuctions);
+          setAuctions(transformedAuctions);
+        } else {
+          console.warn('No auctions data in response or unexpected response format:', response.data);
+          setAuctions([]);
+        }
+      } catch (error) {
+        console.error('Error fetching auctions:', error);
+        // Log more detailed error information
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.error('Error response data:', error.response.data);
+          console.error('Error response status:', error.response.status);
+          console.error('Error response headers:', error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.error('Error request:', error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.error('Error message:', error.message);
+        }
+        
+        toast.error('Failed to load auctions');
+        // Fall back to empty array, don't use mock data
+        setAuctions([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchAuctions();
+  }, []);
+  
+  // Helper function to calculate time remaining
+  const calculateTimeRemaining = (endTimeStr) => {
+    const endTime = new Date(endTimeStr);
+    const now = new Date();
+    const diff = endTime.getTime() - now.getTime();
+    
+    if (diff <= 0) return "Ended";
+    
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    
+    if (days > 0) return `${days}d ${hours}h`;
+    if (hours > 0) return `${hours}h ${minutes}m`;
+    return `${minutes}m`;
+  };
   
   const filteredAuctions = activeCategory === "All" 
-    ? SAMPLE_AUCTIONS 
-    : SAMPLE_AUCTIONS.filter(auction => auction.category === activeCategory);
+    ? auctions 
+    : auctions.filter(auction => {
+        // Convert both to lowercase for case-insensitive comparison
+        const auctionCategory = auction.category?.toLowerCase();
+        const selectedCategory = activeCategory.toLowerCase();
+        return auctionCategory === selectedCategory;
+      });
   
   return (
     <section className="py-16 bg-gray-50 dark:bg-gray-900/50">
@@ -186,7 +158,7 @@ const LiveAuctions = () => {
                 className="rounded-full whitespace-nowrap"
                 onClick={() => setActiveCategory(category)}
               >
-                {category}
+                {category === "All" ? "All" : CATEGORY_DISPLAY_NAMES[category]}
               </Button>
             ))}
           </div>
@@ -198,19 +170,37 @@ const LiveAuctions = () => {
           </div>
         </div>
         
+        {/* Loading state */}
+        {loading && (
+          <div className="text-center py-12">
+            <p className="text-gray-500">Loading auctions...</p>
+          </div>
+        )}
+        
+        {/* Empty state */}
+        {!loading && filteredAuctions.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-gray-500">No auctions found. Please check back later.</p>
+          </div>
+        )}
+        
         {/* Grid of auction cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredAuctions.map((auction) => (
-            <AuctionCard key={auction.id} {...auction} />
-          ))}
-        </div>
+        {!loading && filteredAuctions.length > 0 && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredAuctions.map((auction) => (
+              <AuctionCard key={auction.id} {...auction} />
+            ))}
+          </div>
+        )}
         
         {/* Load more button */}
-        <div className="mt-12 text-center">
-          <Button variant="outline" size="lg" className="rounded-full">
-            Load More Auctions
-          </Button>
-        </div>
+        {!loading && filteredAuctions.length > 0 && (
+          <div className="mt-12 text-center">
+            <Button variant="outline" size="lg" className="rounded-full">
+              Load More Auctions
+            </Button>
+          </div>
+        )}
       </div>
     </section>
   );

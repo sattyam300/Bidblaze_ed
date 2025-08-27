@@ -22,7 +22,8 @@ interface SocketProviderProps {
 export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
   const [isConnected, setIsConnected] = useState(false);
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
+  const isAuthenticated = !!user;
 
   useEffect(() => {
     if (!isAuthenticated || !user) {
@@ -35,9 +36,9 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
     }
 
     // Create socket connection with authentication
-    const newSocket = io('http://localhost:8080', {
+    const newSocket = io('/', {
       auth: {
-        token: localStorage.getItem('token')
+        token: localStorage.getItem('auth-token') || ''
       },
       transports: ['websocket', 'polling'],
       reconnection: true,
@@ -60,11 +61,7 @@ export const SocketProvider: React.FC<SocketProviderProps> = ({ children }) => {
 
     newSocket.on('connect_error', (error) => {
       console.error('🚨 Socket.IO connection error:', error);
-      console.error('🔍 Error details:', {
-        message: error.message,
-        description: error.description,
-        context: error.context
-      });
+      console.error('🔍 Error message:', error.message);
       setIsConnected(false);
     });
 

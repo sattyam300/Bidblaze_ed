@@ -1,5 +1,5 @@
-
 import { useState, useEffect } from "react";
+import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -36,96 +36,6 @@ import { useAuth } from "@/contexts/AuthContext";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import PaymentModal from "@/components/PaymentModal";
 
-// Mock auction data - in a real app, this would come from an API
-const auctionData = {
-  "1": {
-    id: "1",
-    title: "Vintage Rolex Submariner 1680 - Rare Red Sub",
-    description: "A highly sought-after vintage Rolex Submariner 1680 with the rare 'Red Sub' dial. This timepiece features a black dial with red 'Submariner' text, a black bezel, and has been professionally serviced. Includes original box and papers. Excellent condition with minimal wear.",
-    currentBid: 1000000,
-    bids: 18,
-    timeRemaining: "2h 15m",
-    startingPrice: 800000,
-    incrementAmount: 10000,
-    imageUrl: "https://images.unsplash.com/photo-1547996160-81dfa63595aa?auto=format&fit=crop&q=80&w=800&h=600",
-    category: "Watches",
-    seller: "Luxury Watch Emporium",
-    condition: "Excellent",
-    endTime: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
-    location: "Mumbai, India",
-    shipping: "Free shipping within India",
-    returnPolicy: "7-day return policy",
-    authenticity: "100% Authentic",
-    expertVerified: true,
-    images: [
-      "https://images.unsplash.com/photo-1547996160-81dfa63595aa?auto=format&fit=crop&q=80&w=800&h=600",
-      "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?auto=format&fit=crop&q=80&w=800&h=600",
-      "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&q=80&w=800&h=600"
-    ],
-    specifications: {
-      brand: "Rolex",
-      model: "Submariner 1680",
-      year: "1970s",
-      movement: "Automatic",
-      case: "Stainless Steel",
-      dial: "Black with Red Text",
-      bezel: "Black",
-      bracelet: "Stainless Steel Oyster",
-      waterResistance: "200m"
-    }
-  },
-  "2": {
-    id: "2",
-    title: "Rare First Edition Book Collection - Complete Set",
-    description: "A complete collection of rare first edition novels from renowned authors of the 20th century. All books are in very good condition with minimal wear. Includes signed copies and limited editions.",
-    currentBid: 400000,
-    bids: 9,
-    timeRemaining: "4h 30m",
-    startingPrice: 300000,
-    incrementAmount: 5000,
-    imageUrl: "https://images.unsplash.com/photo-1550399105-c4db5fb85c18?auto=format&fit=crop&q=80&w=800&h=600",
-    category: "Books",
-    seller: "Antique Books Ltd.",
-    condition: "Very Good",
-    endTime: new Date(Date.now() + 4.5 * 60 * 60 * 1000).toISOString(),
-    location: "Delhi, India",
-    shipping: "Free shipping within India",
-    returnPolicy: "14-day return policy",
-    authenticity: "Expert Verified",
-    expertVerified: true,
-    images: [
-      "https://images.unsplash.com/photo-1550399105-c4db5fb85c18?auto=format&fit=crop&q=80&w=800&h=600",
-      "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?auto=format&fit=crop&q=80&w=800&h=600",
-      "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=800&h=600"
-    ]
-  },
-  "3": {
-    id: "3",
-    title: "Original Oil Painting by Emma Roberts - Contemporary Art",
-    description: "An original contemporary oil painting by emerging artist Emma Roberts. The piece measures 24″ x 36″ and comes in a handcrafted frame. This is a unique piece with vibrant colors and modern composition.",
-    currentBid: 600000,
-    bids: 12,
-    timeRemaining: "1d 8h",
-    startingPrice: 400000,
-    incrementAmount: 20000,
-    imageUrl: "https://images.unsplash.com/photo-1579783928621-7a13d66a62b1?auto=format&fit=crop&q=80&w=800&h=600",
-    category: "Art",
-    seller: "Modern Art Gallery",
-    condition: "New",
-    endTime: new Date(Date.now() + 32 * 60 * 60 * 1000).toISOString(),
-    location: "Bangalore, India",
-    shipping: "Free shipping within India",
-    returnPolicy: "30-day return policy",
-    authenticity: "Artist Verified",
-    expertVerified: true,
-    images: [
-      "https://images.unsplash.com/photo-1579783928621-7a13d66a62b1?auto=format&fit=crop&q=80&w=800&h=600",
-      "https://images.unsplash.com/photo-1579783928621-7a13d66a62b1?auto=format&fit=crop&q=80&w=800&h=600",
-      "https://images.unsplash.com/photo-1579783928621-7a13d66a62b1?auto=format&fit=crop&q=80&w=800&h=600"
-    ]
-  },
-};
-
 // Form schema
 const bidFormSchema = z.object({
   bidAmount: z.string().refine(
@@ -134,10 +44,13 @@ const bidFormSchema = z.object({
   ),
 });
 
+// ... existing code ...
+
 const MakeBid = () => {
   const { auctionId } = useParams();
   const navigate = useNavigate();
-  const { user, isAuthenticated } = useAuth();
+  const { user } = useAuth();
+  const isAuthenticated = !!user;
   const { socket, isConnected, joinAuction, leaveAuction } = useSocket();
   const [showBidForm, setShowBidForm] = useState(false);
   const [isPlacingBid, setIsPlacingBid] = useState(false);
@@ -145,17 +58,81 @@ const MakeBid = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [liked, setLiked] = useState(false);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  
+  const [isAuctionEnded, setIsAuctionEnded] = useState(false);
+  const [isWinner, setIsWinner] = useState(false);
   // Scroll to top when page loads
   useScrollToTop();
   
-  // In a real app, fetch auction data based on auctionId
-  const auction = auctionData[auctionId || "1"];
+  // Fetch auction from backend when an id is provided
+  const [apiAuction, setApiAuction] = useState<any | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchAuction = async () => {
+      if (!auctionId) {
+        setIsLoading(false);
+        toast.error("No auction ID provided");
+        navigate("/auctions");
+        return;
+      }
+      
+      try {
+        setIsLoading(true);
+        const res = await axios.get(`http://localhost:8080/api/auctions/${auctionId}`);
+        const a = res.data?.auction;
+        if (a && a._id) {
+          // Normalize to local shape expected by UI
+          const normalized = {
+            id: a._id,
+            title: a.title,
+            description: a.description,
+            currentBid: a.current_price,
+            bids: a.total_bids ?? 0,
+            timeRemaining: "",
+            startingPrice: a.starting_price,
+            incrementAmount: a.bid_increment,
+            imageUrl: a.images?.[0]?.url,
+            category: a.category,
+            seller: a.seller_id?.full_name || "",
+            condition: a.condition,
+            endTime: a.end_time,
+            location: a.location || "",
+            shipping: a.shipping || "",
+            returnPolicy: a.return_policy || "",
+            authenticity: a.authenticity || "",
+            highestBidderId: a.highest_bidder_id || "", // Add highest bidder ID for winner determination
+            expertVerified: a.expert_verified || false,
+            images: Array.isArray(a.images) ? a.images.map((img: any) => img.url) : []
+          };
+          setApiAuction(normalized);
+          setCurrentAuction(normalized);
+          // set default bid amount
+          form.setValue('bidAmount', String(normalized.currentBid + normalized.incrementAmount));
+        } else {
+          toast.error("Auction not found");
+          navigate("/auctions");
+        }
+      } catch (e) {
+        toast.error("Error loading auction. Please try again.");
+        navigate("/auctions");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchAuction();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [auctionId]);
+
+
+  // Fallback mock auction if API not available
+  const auction = apiAuction || { currentBid: 0, incrementAmount: 0, id: '' };
   
   const form = useForm<z.infer<typeof bidFormSchema>>({
     resolver: zodResolver(bidFormSchema),
     defaultValues: {
-      bidAmount: (auction.currentBid + auction.incrementAmount).toString(),
+      bidAmount: auction && auction.currentBid !== undefined && auction.incrementAmount !== undefined
+        ? (auction.currentBid + auction.incrementAmount).toString()
+        : "0",
     },
   });
 
@@ -178,17 +155,23 @@ const MakeBid = () => {
     if (!socket) return;
 
     const handleBidUpdate = (data: any) => {
-      if (data.auctionId === auction.id) {
+      if (auction && data.auctionId === auction.id) {
         setCurrentAuction(prev => ({
           ...prev,
           currentBid: data.newBid,
-          bids: data.totalBids || prev.bids + 1
+          bids: data.totalBids || (prev?.bids || 0) + 1,
+          highestBidderId: data.bidderId // Track the highest bidder ID
         }));
         
         // Update form with new minimum bid
-        form.setValue('bidAmount', (data.newBid + auction.incrementAmount).toString());
+        if (auction.incrementAmount !== undefined) {
+          form.setValue('bidAmount', (data.newBid + auction.incrementAmount).toString());
+        }
         
         toast.success(`New bid: ${formatRupees(data.newBid)} by ${data.bidderName}`);
+        
+        // Check if auction has ended and if current user is the winner
+        checkAuctionStatus();
       }
     };
 
@@ -220,44 +203,68 @@ const MakeBid = () => {
     try {
       const bidAmount = Number(values.bidAmount);
       
-      if (bidAmount <= currentAuction.currentBid) {
+      if (!currentAuction) {
+        toast.error("Auction information is not available");
+        setIsPlacingBid(false);
+        return;
+      }
+      
+      if (bidAmount <= (currentAuction.currentBid || 0)) {
         toast.error("Your bid must be higher than the current bid.");
         setIsPlacingBid(false);
         return;
       }
+      const token = localStorage.getItem('auth-token');
+      if (!token) {
+        toast.error("Please login again.");
+        navigate('/auth');
+        setIsPlacingBid(false);
+        return;
+      }
 
-      // In a real app, this would be an API call
-      // For now, we'll simulate the API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      if (!auction || !auction.id) {
+        toast.error("Auction information is missing");
+        setIsPlacingBid(false);
+        return;
+      }
 
-      // Update local state immediately for better UX
+      const res = await axios.post(
+        'http://localhost:8080/api/bids',
+        { auction_id: auction.id, amount: bidAmount },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      const updated = res.data?.auction;
+
       setCurrentAuction(prev => ({
         ...prev,
-        currentBid: bidAmount,
-        bids: prev.bids + 1
+        currentBid: updated?.current_price ?? bidAmount,
+        bids: (updated?.total_bids ?? prev.bids + 1),
+        highestBidderId: user?.id || '' // Set current user as highest bidder
       }));
+      
+      // Check if auction has ended and if current user is the winner
+      checkAuctionStatus();
 
-      // Emit Socket.IO event for real-time updates
-      if (socket && isConnected) {
+      if (socket && isConnected && auction && auction.id) {
+        const bidderId = user?.id || 'user-id';
         socket.emit('newBid', {
           auctionId: auction.id,
-          bidAmount: bidAmount,
-          bidderId: user?._id || 'user-id',
-          bidderName: user?.full_name || user?.business_name || 'Anonymous'
+          bidAmount,
+          bidderId,
+          bidderName: user?.full_name || 'Anonymous'
         });
       }
 
-      // Success!
       toast.success("Bid placed successfully!");
       setShowBidForm(false);
+      // Payment should only happen after auction ends and user is the winner
+      // Removing immed
+      // iate payment prompt after bid
       
-      // Show payment modal for winning bid
-      if (bidAmount >= auction.currentBid) {
-        setShowPaymentModal(true);
-      }
-      
-    } catch (error) {
-      toast.error("Failed to place bid. Please try again.");
+    } catch (error: any) {
+      const msg = error?.response?.data?.message || 'Failed to place bid. Please try again.';
+      toast.error(msg);
     } finally {
       setIsPlacingBid(false);
     }
@@ -270,6 +277,42 @@ const MakeBid = () => {
     const remaining = end - now;
     return Math.max(0, Math.min(100, ((total - remaining) / total) * 100));
   };
+  
+  // Check if auction has ended and if current user is the winner
+  const checkAuctionStatus = () => {
+    if (!auction || !auction.endTime) return;
+    
+    const now = new Date().getTime();
+    const endTime = new Date(auction.endTime).getTime();
+    const hasEnded = now >= endTime;
+    
+    setIsAuctionEnded(hasEnded);
+    
+    // If auction has ended and current user has the highest bid, they are the winner
+    if (hasEnded && user && currentAuction) {
+      // We need to check if the current user is the highest bidder
+      // This would typically require a backend call to verify
+      // For now, we'll use local state as an approximation
+      const isHighestBidder = currentAuction.highestBidderId === user.id;
+      setIsWinner(isHighestBidder);
+      
+      // If user is the winner, show payment modal
+      if (isHighestBidder) {
+        setShowPaymentModal(true);
+      }
+    }
+  };
+  
+  // Check auction status periodically
+  useEffect(() => {
+    checkAuctionStatus();
+    
+    const interval = setInterval(() => {
+      checkAuctionStatus();
+    }, 10000); // Check every 10 seconds
+    
+    return () => clearInterval(interval);
+  }, [auction, currentAuction, user]);
 
   const getQuickBidAmounts = () => {
     const current = displayAuction.currentBid;
@@ -562,14 +605,40 @@ const MakeBid = () => {
                       </form>
                     </Form>
                   ) : (
-                    <Button 
-                      onClick={handlePreBid} 
-                      className="w-full"
-                      size="lg"
-                      disabled={!isAuthenticated}
-                    >
-                      {isAuthenticated ? "Place Bid" : "Login to Bid"}
-                    </Button>
+                    isAuctionEnded ? (
+                      <div className="p-4 rounded-lg bg-gray-100 dark:bg-gray-800 text-center">
+                        <h3 className="text-lg font-semibold mb-2">Auction Ended</h3>
+                        {isWinner ? (
+                          <div>
+                            <p className="text-green-600 dark:text-green-400 font-medium mb-3">
+                              Congratulations! You are the winner of this auction.
+                            </p>
+                            <Button 
+                              onClick={() => setShowPaymentModal(true)} 
+                              className="w-full bg-green-600 hover:bg-green-700 text-white"
+                              size="lg"
+                            >
+                              Complete Payment
+                            </Button>
+                          </div>
+                        ) : (
+                          <p className="text-gray-600 dark:text-gray-400">
+                            This auction has ended. {currentAuction?.currentBid > 0 ? 
+                              "The winner will be notified to complete payment." : 
+                              "No bids were placed on this item."}
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <Button 
+                        onClick={handlePreBid} 
+                        className="w-full"
+                        size="lg"
+                        disabled={!isAuthenticated}
+                      >
+                        {isAuthenticated ? "Place Bid" : "Login to Bid"}
+                      </Button>
+                    )
                   )}
 
                   {/* Security Badge */}
@@ -605,17 +674,20 @@ const MakeBid = () => {
       <Footer />
       
       {/* Payment Modal */}
-      <PaymentModal
-        isOpen={showPaymentModal}
-        onClose={() => setShowPaymentModal(false)}
-        auctionId={auction.id}
-        amount={displayAuction.currentBid}
-        auctionTitle={displayAuction.title}
-        onSuccess={() => {
-          toast.success("Payment completed! You've won the auction!");
-          setShowPaymentModal(false);
-        }}
-      />
+      {/* Only show payment modal if auction has ended and user is the winner */}
+      {isAuctionEnded && isWinner && (
+        <PaymentModal
+          isOpen={showPaymentModal}
+          onClose={() => setShowPaymentModal(false)}
+          auctionId={auction.id}
+          amount={displayAuction.currentBid}
+          auctionTitle={displayAuction.title}
+          onSuccess={() => {
+            toast.success("Payment completed! You've won the auction!");
+            setShowPaymentModal(false);
+          }}
+        />
+      )}
     </div>
   );
 };

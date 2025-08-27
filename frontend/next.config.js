@@ -6,7 +6,7 @@ const nextConfig = {
     domains: ['images.unsplash.com', 'res.cloudinary.com'],
   },
   env: {
-    MONGODB_URI: process.env.MONGODB_URI,
+    MONGODB_URI: 'mongodb+srv://dassatyam300:fYg74wKbtERMBcXd@cluster0.jjlawdr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0',
     JWT_SECRET: process.env.JWT_SECRET,
     RAZORPAY_KEY_ID: process.env.RAZORPAY_KEY_ID,
     RAZORPAY_KEY_SECRET: process.env.RAZORPAY_KEY_SECRET,

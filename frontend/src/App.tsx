@@ -22,6 +22,7 @@ import AuthPage from "./pages/AuthPage";
 import SellerDashboard from "./pages/SellerDashboard";
 import ProfileEdit from "./pages/ProfileEdit";
 import WebSocketTest from "./pages/WebSocketTest";
+import EditAuction from "./pages/EditAuction";
 import { ThemeProvider } from "@/contexts/ThemeContext";
 
 const queryClient = new QueryClient();
@@ -47,6 +48,7 @@ const App = () => (
               
               {/* Auction & Bidding Routes */}
               <Route path="/bid/:auctionId" element={<MakeBid />} />
+              <Route path="/auction/:auctionId" element={<MakeBid />} />
               
               {/* Authentication Routes */}
               <Route path="/user-signin" element={<UserSignIn />} />
@@ -57,6 +59,7 @@ const App = () => (
               
               {/* Seller Routes */}
               <Route path="/seller-dashboard" element={<SellerDashboard />} />
+              <Route path="/edit-auction/:auctionId" element={<EditAuction />} />
               
               {/* Profile Routes */}
               <Route path="/profile-edit" element={<ProfileEdit />} />

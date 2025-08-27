@@ -38,7 +38,7 @@ app.use('/api/', limiter);
 
 // CORS configuration
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: [process.env.FRONTEND_URL || 'http://localhost:3000', 'http://localhost:3001'],
   credentials: true
 }));
 
@@ -46,20 +46,18 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Database connection
-const atlasUrl = 'mongodb+srv://dassatyam300:fYg74wKbtERMBcXd@cluster0.jjlawdr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+// Import the connectDB function from the mongodb.js file
+const connectDB = require('./lib/mongodb');
 
-// Connect to MongoDB
-mongoose.connect(atlasUrl)
-  .then(() => {
-    console.log('MongoDB Connected Connected Successfully');
-  })
-  .catch((err) => {
-    console.error(`Error: ${err.message}`);
-    process.exit(1);
-  });
+// Import models to ensure they are registered with Mongoose
+require('./models/User');
+require('./models/Auction');
+require('./models/Bid');
+require('./models/Seller');
+require('./models/Transaction');
 
-
+// Connect to MongoDB Atlas directly using the connectDB function
+connectDB();
 
 
 // Socket.IO setup

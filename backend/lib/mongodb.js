@@ -4,16 +4,21 @@ const mongoose = require('mongoose');
 // This function establishes a connection to the MongoDB database.
 const connectDB = async () => {
   try {
-    // Attempt to connect to the database using the connection string from the environment variables.
-    // The MONGO_URI variable should be set in your .env file.
-    const conn = await mongoose.connect(process.env.MONGO_URI);
+    // Direct connection to MongoDB Atlas
+    const atlasUrl = 'mongodb+srv://dassatyam300:fYg74wKbtERMBcXd@cluster0.jjlawdr.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+    
+    // Use the Atlas URL directly instead of environment variable
+    const conn = await mongoose.connect(atlasUrl, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
 
     // If the connection is successful, log a confirmation message to the console.
-    // `conn.connection.host` will display the host of the connected database.
-    console.log(`MongoDB Connected Connected Successfully`);
+    console.log(`MongoDB Atlas Connected Successfully`);
+    console.log(`Connected to: ${conn.connection.host}`);
   } catch (error) {
     // If an error occurs during the connection attempt, log the error message.
-    console.error(`Error: ${error.message}`);
+    console.error(`MongoDB Connection Error: ${error.message}`);
     
     // Exit the Node.js process with a "failure" code (1). This is important because
     // if the app can't connect to the database, it can't function properly.
