@@ -1,6 +1,7 @@
-# eBay Product Search Integration
+# BidBlaze - Online Auction Platform
 
-This project demonstrates how to integrate with the eBay API to search and display products. It consists of a Node.js/Express backend and a React frontend.
+BidBlaze is a modern online auction platform built with the MERN stack (MongoDB, Express, React, Node.js). It provides a secure and real-time bidding experience with features like user authentication, payment processing, and image uploads.
+
 
 ## 🛠️ Technology Stack
 
@@ -73,9 +74,9 @@ cd Bidblaze_ed
 
 ### 1. Backend Setup
 
-1. Navigate to the server directory:
+1. Navigate to the backend directory:
    ```bash
-   cd server
+   cd backend
    ```
 
 2. Install dependencies:
@@ -83,103 +84,107 @@ cd Bidblaze_ed
    npm install
    ```
 
-3. Configure eBay API credentials:
-   - Edit the `.env` file
-   - Add your eBay Sandbox credentials:
-     ```
-     EBAY_SANDBOX_CLIENT_ID="your_client_id_here"
-     EBAY_SANDBOX_CLIENT_SECRET="your_client_secret_here"
-     ```
+3. Create a `.env` file with the following variables:
+   ```
+   MONGODB_URI=your_mongodb_connection_string
+   JWT_SECRET=your_jwt_secret_key
+   PORT=8080
+   FRONTEND_URL=http://localhost:3000
+   CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+   CLOUDINARY_API_KEY=your_cloudinary_api_key
+   CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+   RAZORPAY_KEY_ID=your_razorpay_key_id
+   RAZORPAY_KEY_SECRET=your_razorpay_key_secret
+   RAZORPAY_WEBHOOK_SECRET=your_razorpay_webhook_secret
+   ```
 
 4. Start the server:
-   ```bash
-   npm start
-   ```
-   
-   The server will run on `http://localhost:5000`
-
-### 2. Frontend Setup
-
-1. Navigate to the client directory:
-   ```bash
-   cd client
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Start the development server:
    ```bash
    npm run dev
    ```
    
-   The frontend will run on `http://localhost:5173`
+   The server will run on `http://localhost:8080`
+
+### 2. Frontend Setup
+
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Create a `.env` file based on the `env.example` template:
+   ```
+   VITE_API_URL=http://localhost:8080
+   VITE_RAZORPAY_KEY_ID=your_razorpay_key_id
+   VITE_WS_URL=ws://localhost:8080
+   VITE_ENABLE_PAYMENTS=true
+   VITE_ENABLE_WEBSOCKET=true
+   ```
+
+4. Start the development server:
+   ```bash
+   npm run dev
+   ```
+   
+   The frontend will run on `http://localhost:3000`
 
 ## Features
 
-### Backend (`/server`)
-- **Express Server**: RESTful API server with CORS enabled
-- **eBay API Integration**: 
-  - OAuth2 token authentication
-  - Product search functionality
-  - Error handling and logging
-- **API Endpoints**:
-  - `GET /api/search`: Search eBay products
-  - `GET /health`: Health check endpoint
+### Backend (`/backend`)
+- **Express Server**: RESTful API server with security features
+- **MongoDB Integration**: Database for storing users, auctions, bids, and transactions
+- **Authentication**: JWT-based user authentication and authorization
+- **WebSocket Support**: Real-time bidding and notifications
+- **Payment Processing**: Razorpay integration for secure payments
+- **Image Upload**: Cloudinary integration for image storage
 
-### Frontend (`/client`)
-- **React Application**: Modern React app built with Vite
-- **Product Display**: 
-  - Responsive grid layout
-  - Product cards with images, titles, and prices
-  - Loading and error states
-- **Styling**: Clean, modern CSS with hover effects and responsive design
+### Frontend (`/frontend`)
+- **React Application**: Modern React app built with TypeScript and Vite
+- **User Authentication**: Login, registration, and profile management
+- **Auction Management**: Create, browse, and bid on auctions
+- **Real-time Updates**: WebSocket integration for live bidding
+- **Responsive Design**: Mobile-friendly UI with Tailwind CSS
+- **Form Validation**: Client-side validation with React Hook Form and Zod
 
-## API Usage
+## API Endpoints
 
-### Search Products
+### Authentication
 ```bash
-GET http://localhost:5000/api/search
+POST /api/auth/register  # Register a new user
+POST /api/auth/login     # Login and get JWT token
+GET /api/auth/me         # Get current user profile
 ```
 
-**Response:**
-```json
-{
-  "success": true,
-  "items": [
-    {
-      "itemId": "123456789",
-      "title": "Product Title",
-      "price": {
-        "value": "29.99",
-        "currency": "USD"
-      },
-      "image": {
-        "imageUrl": "https://example.com/image.jpg"
-      }
-    }
-  ]
-}
+### Auctions
+```bash
+GET /api/auctions        # Get all auctions
+GET /api/auctions/:id    # Get auction by ID
+POST /api/auctions       # Create a new auction
+PUT /api/auctions/:id    # Update an auction
+DELETE /api/auctions/:id # Delete an auction
 ```
 
-## eBay API Setup
+### Bids
+```bash
+GET /api/bids            # Get all bids
+POST /api/bids           # Place a new bid
+```
 
-To use this application, you'll need to:
+### Payments
+```bash
+POST /api/payments/create-order  # Create a payment order
+POST /api/payments/verify        # Verify payment
+```
 
-1. Create an eBay Developer account at [developer.ebay.com](https://developer.ebay.com)
-2. Create a new application in the eBay Developer Portal
-3. Get your Sandbox Client ID and Client Secret
-4. Add these credentials to the `server/.env` file
-
-## Technologies Used
-
-### Backend
-- **Node.js**: JavaScript runtime
-- **Express**: Web framework
-- **Axios**: HTTP client for API requests
-- **dotenv**: Environment variable management
+### Images
+```bash
+POST /api/images/upload  # Upload an image
+```
 - **CORS**: Cross-origin resource sharing
 
 ### Frontend
